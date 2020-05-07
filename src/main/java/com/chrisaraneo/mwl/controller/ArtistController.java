@@ -24,8 +24,8 @@ public class ArtistController {
     }
 
     @PostMapping("/artists")
-    public Artist createArtist(@Valid @RequestBody Artist note) {
-        return artistRepository.save(note);
+    public Artist createArtist(@Valid @RequestBody Artist artist) {
+        return artistRepository.save(artist);
     }
 
     @GetMapping("/artists/{id}")
@@ -49,10 +49,10 @@ public class ArtistController {
 
     @DeleteMapping("/artists/{id}")
     public ResponseEntity<?> deleteArtist(@PathVariable(value = "id") Long artistID) {
-        Artist note = artistRepository.findById(artistID)
+        Artist artist = artistRepository.findById(artistID)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistID));
 
-        artistRepository.delete(note);
+        artistRepository.delete(artist);
 
         return ResponseEntity.ok().build();
     }

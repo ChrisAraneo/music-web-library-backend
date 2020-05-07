@@ -54,9 +54,9 @@ public class Artist {
 		return artistID;
 	}
 
-	public void setArtistID(Long artistID) {
-		this.artistID = artistID;
-	}
+//	public void setArtistID(Long artistID) {
+//		this.artistID = artistID;
+//	}
 
 	public String getArtistName() {
 		return artistName;

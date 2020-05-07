@@ -7,38 +7,34 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
 @Entity
-@Table(name = "artist_types")
+@Table(name = "covers")
 @EntityListeners(AuditingEntityListener.class)
 
-public class ArtistType {
+public class Cover {
 	@Id
-	@Column(name = "artistTypeID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long artistTypeID;
+    @Column(name = "coverID")
+    private Long coverID;
 	
-	@NotBlank
-	private String name;
+    private String base64 = "";
 
-	
-	public Long getArtistTypeID() {
-		return artistTypeID;
+	public Long getCoverID() {
+		return coverID;
 	}
 
-//	public void setArtistTypeID(Long artistTypeID) {
-//		this.artistTypeID = artistTypeID;
-//	}
-
-	public String getName() {
-		return name;
+	public void setCoverID(Long coverID) {
+		this.coverID = coverID;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getBase64() {
+		return base64;
+	}
+
+	public void setBase64(String base64) {
+		this.base64 = base64;
 	}
 }
