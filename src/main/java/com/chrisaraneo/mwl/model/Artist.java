@@ -12,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "artists")
@@ -38,6 +40,23 @@ public class Artist {
     private String lastName;
     private Date birthDate;
     private String country;
+    
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE
+            })
+    @JoinTable(name = "artist_songs",
+            joinColumns = { @JoinColumn(name = "artistID") },
+            inverseJoinColumns = { @JoinColumn(name = "songID") })
+    private Set<Song> songs = new HashSet<>();
+    
+    @OneToMany(
+            mappedBy = "artist",
+            cascade = CascadeType.PERSIST,
+            fetch = FetchType.LAZY
+        )
+    private Set<URL> urls = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)

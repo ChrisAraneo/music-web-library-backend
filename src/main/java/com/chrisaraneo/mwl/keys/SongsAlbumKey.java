@@ -12,33 +12,33 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.chrisaraneo.mwl.model.Playlist;
+import com.chrisaraneo.mwl.model.Album;
 
 @Embeddable
-public class SongsPlaylistKey implements Serializable {
-	private static final long serialVersionUID = -5338902479381796058L;
+public class SongsAlbumKey implements Serializable {
+	private static final long serialVersionUID = 30063342056840743L;
 
 	@ManyToOne
-	@JoinColumn(name = "playlistID", nullable = false)
+	@JoinColumn(name = "albumID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private Playlist playlist;
+    private Album album;
 	
 	@NotBlank
 	private Long track;
 
 	
-    public SongsPlaylistKey(Playlist playlist, Long track) {
-        this.playlist = playlist;
+    public SongsAlbumKey(Album album, Long track) {
+        this.album = album;
         this.track = track;
     }
 
-    public Playlist getPlaylist() {
-		return playlist;
+    public Album getAlbum() {
+		return album;
 	}
 
-	public void setPlaylist(Playlist playlist) {
-		this.playlist = playlist;
+	public void setAlbum(Album album) {
+		this.album = album;
 	}
 
 	public Long getTrack() {
@@ -54,9 +54,9 @@ public class SongsPlaylistKey implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SongsPlaylistKey that = (SongsPlaylistKey) o;
+        SongsAlbumKey that = (SongsAlbumKey) o;
 
-        if (!playlist.getPlaylistID().equals(that.getPlaylist().getPlaylistID())) {
+        if (!album.getAlbumID().equals(that.getAlbum().getAlbumID())) {
         	return false;
         }
         return track.equals(that.track);
@@ -64,6 +64,6 @@ public class SongsPlaylistKey implements Serializable {
 
     @Override
     public int hashCode() {
-    	return Objects.hash(playlist.getPlaylistID(), track);
+    	return Objects.hash(album.getAlbumID(), track);
     }
 }

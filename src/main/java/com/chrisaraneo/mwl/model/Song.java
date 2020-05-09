@@ -1,13 +1,18 @@
 package com.chrisaraneo.mwl.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,6 +33,7 @@ public class Song {
     private Long songID;
     
     @NotBlank
+    @Column(name = "title")
     private String title;
     
     private Long length;
@@ -40,6 +46,13 @@ public class Song {
     private String key;
     private String terms;
     private String website;
+    
+    @OneToMany(
+            mappedBy = "song",
+            cascade = CascadeType.PERSIST,
+            fetch = FetchType.LAZY
+        )
+    private Set<URL> urls = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)

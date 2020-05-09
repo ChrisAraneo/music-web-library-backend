@@ -26,15 +26,16 @@ public class Playlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long playlistID;
 	
+	@NotBlank
+	private Long title;
+	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User user;
-	
-	@NotBlank
-	private Long title;
 
+	
 	public Long getPlaylistID() {
 		return playlistID;
 	}
