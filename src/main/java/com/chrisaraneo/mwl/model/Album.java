@@ -1,75 +1,109 @@
 package com.chrisaraneo.mwl.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "albums")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="albums")
+@NamedQuery(name="Album.findAll", query="SELECT a FROM Album a")
+public class Album implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Album {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "albumID")
-    private Long albumID;
-	
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="album_id", unique=true, nullable=false)
+	private Integer albumID;
+
+	@Column(nullable=false, length=255)
 	@NotBlank
-    private String title;
-	
-	@NotBlank
-    private Long year;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "coverID", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Cover cover;
+	private String title;
+
+	private int year;
+
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumn(name="cover_id")
+//	private Cover cover;
+
+	@OneToMany(mappedBy="album")
+	private Set<Review> reviews;
+
+	@ManyToMany(
+			mappedBy="albums",
+			fetch = FetchType.EAGER,
+		    cascade = { CascadeType.ALL })
+	@JoinTable(name = "songs_album",
+	    joinColumns = { @JoinColumn(name = "album_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "song_id") })
+	private Set<Song> songs = new HashSet<Song>();
 
 	
-	public Long getAlbumID() {
-		return albumID;
+	public Album() { }
+
+	public int getAlbumID() {
+		return this.albumID;
 	}
 
-	public void setAlbumID(Long albumID) {
+	public void setAlbumID(int albumID) {
 		this.albumID = albumID;
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public Long getYear() {
-		return year;
+	public int getYear() {
+		return this.year;
 	}
 
-	public void setYear(Long year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 
-	public Cover getCover() {
-		return cover;
+//	public Cover getCover() {
+//		return this.cover;
+//	}
+//
+//	public void setCover(Cover cover) {
+//		this.cover = cover;
+//	}
+
+	public Set<Review> getReviews() {
+		return this.reviews;
 	}
 
-	public void setCover(Cover cover) {
-		this.cover = cover;
+	public void setReviews(Set<Review> reviews) {
+		this.reviews = reviews;
 	}
+
+	public Review addReview(Review review) {
+		getReviews().add(review);
+		review.setAlbum(this);
+
+		return review;
+	}
+
+	public Review removeReview(Review review) {
+		getReviews().remove(review);
+		review.setAlbum(null);
+
+		return review;
+	}
+
+	public Set<Song> getSongs() {
+		return this.songs;
+	}
+
+	public void setSongs(Set<Song> songs) {
+		this.songs = songs;
+	}
+
 }

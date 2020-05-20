@@ -1,104 +1,122 @@
 package com.chrisaraneo.mwl.model;
 
-import java.util.Date;
+import java.io.Serializable;
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "songs")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="songs")
+@NamedQuery(name="Song.findAll", query="SELECT s FROM Song s")
+public class Song implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Song {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "songID")
-    private Long songID;
-    
-    @NotBlank
-    @Column(name = "title")
-    private String title;
-    
-    private Long length;
-    private Long year;
-    private String genre;
-    private String language;
-    private String publisher;
-    private String comment;
-    private Long bpm;
-    private String key;
-    private String terms;
-    private String website;
-    
-    @OneToMany(
-            mappedBy = "song",
-            cascade = CascadeType.PERSIST,
-            fetch = FetchType.LAZY
-        )
-    private Set<URL> urls = new HashSet<>();
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="song_id", unique=true, nullable=false)
+	private Integer songID;
 
-    @Column(nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
-    private Date createdAt;
+	private Integer bpm;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
-    private Date updatedAt;
+	@Column(length=255)
+	private String comment;
 
-    
-	public Long getSongID() {
-		return songID;
+	@Column(length=255)
+	private String genre;
+
+	@Column(length=255)
+	private String language;
+
+	private Integer length;
+
+	@Column(name="main_key", length=255)
+	private String mainKey;
+
+	@Column(length=255)
+	private String publisher;
+
+	@Column(length=255)
+	private String terms;
+
+	@Column(nullable=false, length=255)
+	private String title;
+
+	@Column(length=255)
+	private String website;
+
+	private Integer year;
+
+//	@ManyToMany
+//	@JoinTable(
+//		name="songsAlbum"
+//		, joinColumns={
+//			@JoinColumn(name="song_id", nullable=false)
+//			}
+//		, inverseJoinColumns={
+//			@JoinColumn(name="album_id", nullable=false)
+//			}
+//		)
+//	private Set<Album> albums;
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@ManyToMany(
+			mappedBy = "songs",
+			fetch = FetchType.EAGER,
+            cascade = { CascadeType.ALL })
+    private Set<Album> albums = new HashSet<Album>();
+
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@ManyToMany
+	@JoinTable(
+		name="songsArtist"
+		, joinColumns={
+			@JoinColumn(name="song_id", nullable=false)
+			}
+		, inverseJoinColumns={
+			@JoinColumn(name="artist_id", nullable=false)
+			}
+		)
+	private Set<Artist> artists;
+
+//	@OneToMany(mappedBy="song")
+//	private Set<SongsPlaylist> songsPlaylists;
+
+//	@OneToMany(mappedBy="song")
+//	private Set<SongURL> songURLs;
+
+	public Song() { }
+
+	public Integer getSongID() {
+		return this.songID;
 	}
 
-	public void setSongID(Long songID) {
+	public void setSongID(Integer songID) {
 		this.songID = songID;
 	}
 
-	public String getTitle() {
-		return title;
+	public Integer getBpm() {
+		return this.bpm;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setBpm(Integer bpm) {
+		this.bpm = bpm;
 	}
 
-	public Long getLength() {
-		return length;
+	public String getComment() {
+		return this.comment;
 	}
 
-	public void setLength(Long length) {
-		this.length = length;
-	}
-
-	public Long getYear() {
-		return year;
-	}
-
-	public void setYear(Long year) {
-		this.year = year;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public String getGenre() {
-		return genre;
+		return this.genre;
 	}
 
 	public void setGenre(String genre) {
@@ -106,74 +124,127 @@ public class Song {
 	}
 
 	public String getLanguage() {
-		return language;
+		return this.language;
 	}
 
 	public void setLanguage(String language) {
 		this.language = language;
 	}
 
+	public Integer getLength() {
+		return this.length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+
+	public String getMainKey() {
+		return this.mainKey;
+	}
+
+	public void setMainKey(String mainKey) {
+		this.mainKey = mainKey;
+	}
+
 	public String getPublisher() {
-		return publisher;
+		return this.publisher;
 	}
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public Long getBpm() {
-		return bpm;
-	}
-
-	public void setBpm(Long bpm) {
-		this.bpm = bpm;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
 	public String getTerms() {
-		return terms;
+		return this.terms;
 	}
 
 	public void setTerms(String terms) {
 		this.terms = terms;
 	}
 
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public String getWebsite() {
-		return website;
+		return this.website;
 	}
 
 	public void setWebsite(String website) {
 		this.website = website;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Integer getYear() {
+		return this.year;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public Set<Album> getAlbums() {
+		return this.albums;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setAlbums(Set<Album> albums) {
+		this.albums = albums;
 	}
+
+	public Set<Artist> getArtists() {
+		return this.artists;
+	}
+
+	public void setArtists(Set<Artist> artists) {
+		this.artists = artists;
+	}
+
+//	public Set<SongsPlaylist> getSongsPlaylists() {
+//		return this.songsPlaylists;
+//	}
+//
+//	public void setSongsPlaylists(Set<SongsPlaylist> songsPlaylists) {
+//		this.songsPlaylists = songsPlaylists;
+//	}
+
+//	public SongsPlaylist addSongsPlaylist(SongsPlaylist songsPlaylist) {
+//		getSongsPlaylists().add(songsPlaylist);
+//		songsPlaylist.setSong(this);
+//
+//		return songsPlaylist;
+//	}
+//
+//	public SongsPlaylist removeSongsPlaylist(SongsPlaylist songsPlaylist) {
+//		getSongsPlaylists().remove(songsPlaylist);
+//		songsPlaylist.setSong(null);
+//
+//		return songsPlaylist;
+//	}
+
+//	public Set<SongURL> getSongURLs() {
+//		return this.songURLs;
+//	}
+//
+//	public void setSongURLs(Set<SongURL> songURLs) {
+//		this.songURLs = songURLs;
+//	}
+
+//	public SongURL addSongURL(SongURL songURL) {
+//		getSongURLs().add(songURL);
+//		songURL.setSong(this);
+//
+//		return songURL;
+//	}
+//
+//	public SongURL removeSongURL(SongURL songURL) {
+//		getSongURLs().remove(songURL);
+//		songURL.setSong(null);
+//
+//		return songURL;
+//	}
+
 }

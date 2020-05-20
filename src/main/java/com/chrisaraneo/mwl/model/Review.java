@@ -1,60 +1,69 @@
 package com.chrisaraneo.mwl.model;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "reviews")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="reviews")
+@NamedQuery(name="Review.findAll", query="SELECT r FROM Review r")
+public class Review implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Review {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewID;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "albumID", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Album album;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userID", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private User user;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="review_id", unique=true, nullable=false)
+	private Integer reviewID;
 
-	@NotBlank
-	private String title;
-	
+	@Lob
+	@Column(nullable=false)
 	@NotBlank
 	private String content;
 
-	
-	public Long getReviewID() {
-		return reviewID;
+	@Column(nullable=false, length=255)
+	@NotBlank
+	private String title;
+
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="album_id", nullable=false)
+	@NotNull
+	private Album album;
+
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="user_id", nullable=false)
+	@NotNull
+	private User user;
+
+	public Review() { }
+
+	public Integer getReviewID() {
+		return this.reviewID;
 	}
 
-	public void setReviewID(Long reviewID) {
+	public void setReviewID(Integer reviewID) {
 		this.reviewID = reviewID;
 	}
 
+	public String getContent() {
+		return this.content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public Album getAlbum() {
-		return album;
+		return this.album;
 	}
 
 	public void setAlbum(Album album) {
@@ -62,26 +71,11 @@ public class Review {
 	}
 
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
 }

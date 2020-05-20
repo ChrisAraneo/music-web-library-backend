@@ -1,54 +1,66 @@
 package com.chrisaraneo.mwl.model;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.chrisaraneo.mwl.keys.SongsPlaylistKey;
 
 @Entity
-@Table(name = "songs_playlists")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="songsplaylist")
+@NamedQuery(name="SongsPlaylist.findAll", query="SELECT s FROM SongsPlaylist s")
+public class SongsPlaylist implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class SongsPlaylist {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="song_playlist_id", unique=true, nullable=false)
+	private Integer songsPlaylistID;
 	
-	@EmbeddedId
-    private SongsPlaylistKey songsPlaylistID; // key: playlist + track
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "songID", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="playlist_id", nullable=false)
 	@NotNull
-    private Song song;
+	private Playlist playlist;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="song_id", nullable=false)
+	@NotNull
+	private Song song;
+	
+	@Column(name="order")
+	private Integer order;
+	
+	public SongsPlaylist() {}
 
-	
-	public SongsPlaylist(SongsPlaylistKey ID, Song song) {
+	public Integer getSongsPlaylistID() {
+		return this.songsPlaylistID;
+	}
+
+	public void setSongsPlaylistID(Integer ID) {
 		this.songsPlaylistID = ID;
-		this.song = song;
 	}
-	
+
 	public Playlist getPlaylist() {
-		return songsPlaylistID.getPlaylist();
+		return this.playlist;
 	}
-	
-	public Long getTrack() {
-		return songsPlaylistID.getTrack();
+
+	public void setPlaylist(Playlist playlist) {
+		this.playlist = playlist;
 	}
-	
+
 	public Song getSong() {
-		return song;
+		return this.song;
 	}
 
 	public void setSong(Song song) {
 		this.song = song;
 	}
+	
+	public Integer getOrder() {
+		return this.order;
+	}
+	
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
 }

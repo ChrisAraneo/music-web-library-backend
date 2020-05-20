@@ -1,40 +1,65 @@
 package com.chrisaraneo.mwl.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.Set;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "covers")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="covers")
+@NamedQuery(name="Cover.findAll", query="SELECT c FROM Cover c")
+public class Cover implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Cover {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coverID")
-    private Long coverID;
-	
-    private String base64 = "";
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="cover_id", unique=true, nullable=false)
+	private Integer coverID;
 
-	public Long getCoverID() {
-		return coverID;
+	@Lob
+	private String data;
+
+	@OneToMany(mappedBy="cover")
+	private Set<Album> albums;
+
+	public Cover() { }
+
+	public Integer getCoverID() {
+		return this.coverID;
 	}
 
-	public void setCoverID(Long coverID) {
+	public void setCoverID(Integer coverID) {
 		this.coverID = coverID;
 	}
 
-	public String getBase64() {
-		return base64;
+	public String getData() {
+		return this.data;
 	}
 
-	public void setBase64(String base64) {
-		this.base64 = base64;
+	public void setData(String data) {
+		this.data = data;
 	}
+
+	public Set<Album> getAlbums() {
+		return this.albums;
+	}
+
+	public void setAlbums(Set<Album> albums) {
+		this.albums = albums;
+	}
+//
+//	public Album addAlbum(Album album) {
+//		getAlbums().add(album);
+//		album.setCover(this);
+//
+//		return album;
+//	}
+//
+//	public Album removeAlbum(Album album) {
+//		getAlbums().remove(album);
+//		album.setCover(null);
+//
+//		return album;
+//	}
+
 }

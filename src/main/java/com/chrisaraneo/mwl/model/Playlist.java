@@ -1,62 +1,82 @@
 package com.chrisaraneo.mwl.model;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "playlists")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name="playlists")
+@NamedQuery(name="Playlist.findAll", query="SELECT p FROM Playlist p")
+public class Playlist implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Playlist {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long playlistID;
-	
-	@NotBlank
-	private Long title;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userID", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private User user;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="playlist_id", unique=true, nullable=false)
+	private Integer playlistID;
 
-	
-	public Long getPlaylistID() {
-		return playlistID;
+	@Column(nullable=false, length=255)
+	@NotBlank
+	private String title;
+
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="user_id", nullable=false)
+	@NotNull
+	private User user;
+
+	@OneToMany(mappedBy="playlist")
+	private Set<SongsPlaylist> songsPlaylists;
+
+	public Playlist() { }
+
+	public Integer getPlaylistID() {
+		return this.playlistID;
 	}
 
-	public void setPlaylistID(Long playlistID) {
+	public void setPlaylistID(Integer playlistID) {
 		this.playlistID = playlistID;
 	}
 
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public Long getTitle() {
-		return title;
+	public Set<SongsPlaylist> getSongsPlaylists() {
+		return this.songsPlaylists;
 	}
 
-	public void setTitle(Long title) {
-		this.title = title;
+	public void setSongsPlaylists(Set<SongsPlaylist> songsPlaylists) {
+		this.songsPlaylists = songsPlaylists;
 	}
+
+	public SongsPlaylist addSongsPlaylist(SongsPlaylist songsPlaylist) {
+		getSongsPlaylists().add(songsPlaylist);
+		songsPlaylist.setPlaylist(this);
+
+		return songsPlaylist;
+	}
+
+	public SongsPlaylist removeSongsPlaylist(SongsPlaylist songsPlaylist) {
+		getSongsPlaylists().remove(songsPlaylist);
+		songsPlaylist.setPlaylist(null);
+
+		return songsPlaylist;
+	}
+
 }
