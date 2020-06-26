@@ -25,30 +25,28 @@ public class Album implements Serializable {
 
 	private int year;
 
-//	@ManyToOne(fetch=FetchType.LAZY)
-//	@JoinColumn(name="cover_id")
-//	private Cover cover;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="cover_id")
+	private Cover cover;
 
 	@OneToMany(mappedBy="album")
 	private Set<Review> reviews;
 
-	@ManyToMany(
-			mappedBy="albums",
-			fetch = FetchType.EAGER,
-		    cascade = { CascadeType.ALL })
-	@JoinTable(name = "songs_album",
-	    joinColumns = { @JoinColumn(name = "album_id") },
-	    inverseJoinColumns = { @JoinColumn(name = "song_id") })
+	@ManyToMany
+	@JoinTable(
+		name="songs_album",
+		joinColumns = @JoinColumn(name = "album_id"),
+		inverseJoinColumns = @JoinColumn(name = "song_id"))
 	private Set<Song> songs = new HashSet<Song>();
 
 	
 	public Album() { }
 
-	public int getAlbumID() {
+	public Integer getAlbumID() {
 		return this.albumID;
 	}
 
-	public void setAlbumID(int albumID) {
+	public void setAlbumID(Integer albumID) {
 		this.albumID = albumID;
 	}
 
@@ -60,21 +58,21 @@ public class Album implements Serializable {
 		this.title = title;
 	}
 
-	public int getYear() {
+	public Integer getYear() {
 		return this.year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(Integer year) {
 		this.year = year;
 	}
 
-//	public Cover getCover() {
-//		return this.cover;
-//	}
-//
-//	public void setCover(Cover cover) {
-//		this.cover = cover;
-//	}
+	public Cover getCover() {
+		return this.cover;
+	}
+
+	public void setCover(Cover cover) {
+		this.cover = cover;
+	}
 
 	public Set<Review> getReviews() {
 		return this.reviews;

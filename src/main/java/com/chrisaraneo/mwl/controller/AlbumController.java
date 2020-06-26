@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +31,13 @@ public class AlbumController {
     SongRepository songRepository;
 
     @GetMapping("/albums")
+    @CrossOrigin(origins = "*")
     public List<Album> getAllAlbums() {
         return albumRepository.findAll();
     }
     
     @GetMapping("/albums/{id}")
+    @CrossOrigin(origins = "*")
     public Album getAlbumById(@PathVariable(value = "id") Integer albumID) {
         return albumRepository.findById(albumID)
                 .orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));

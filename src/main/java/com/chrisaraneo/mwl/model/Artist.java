@@ -4,6 +4,10 @@ import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -40,8 +44,9 @@ public class Artist implements Serializable {
 	@JoinColumn(name="artist_type_id")
 	private ArtistType artistType;
 
-	@ManyToMany(mappedBy="artists")
-	private Set<Song> songs;
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@ManyToMany(mappedBy = "artists")
+    private Set<Song> songs;
 
 	public Artist() {}
 
@@ -123,6 +128,7 @@ public class Artist implements Serializable {
 //		return artistURL;
 //	}
 
+	@JsonIgnore
 	public Set<Song> getSongs() {
 		return this.songs;
 	}

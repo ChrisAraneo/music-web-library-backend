@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.Playlist;
 import com.chrisaraneo.mwl.model.Song;
-import com.chrisaraneo.mwl.model.SongsPlaylist;
+import com.chrisaraneo.mwl.model.PlaylistRecord;
 import com.chrisaraneo.mwl.repository.PlaylistRepository;
 import com.chrisaraneo.mwl.repository.SongRepository;
-import com.chrisaraneo.mwl.repository.SongsPlaylistRepository;
+import com.chrisaraneo.mwl.repository.PlaylistRecordRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -35,7 +35,7 @@ public class PlaylistController {
     SongRepository songRepository;
     
     @Autowired
-    SongsPlaylistRepository songsPlaylistRepository;
+    PlaylistRecordRepository songsPlaylistRepository;
 
     @GetMapping("/playlists")
     public List<Playlist> getAllPlaylists() {
@@ -64,14 +64,14 @@ public class PlaylistController {
     	Song song = songRepository.findById(songID)
                 .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
     	
-    	SongsPlaylist record = new SongsPlaylist();
+    	PlaylistRecord record = new PlaylistRecord();
     	record.setPlaylist(playlist);
     	record.setSong(song);
     	record.setOrder(new Integer(0));
     	
-    	Set<SongsPlaylist> set = playlist.getSongsPlaylists();
+    	Set<PlaylistRecord> set = playlist.getPlaylistRecords();
     	set.add(record);
-    	playlist.setSongsPlaylists(set);
+    	playlist.setPlaylistRecords(set);
     	
     	songsPlaylistRepository.save(record);
         return playlistRepository.save(playlist);
@@ -90,12 +90,12 @@ public class PlaylistController {
     }
     
     @PutMapping("/songsplaylist/{id}")
-    public SongsPlaylist updateSongPlaylist(
+    public PlaylistRecord updateSongPlaylist(
     		@PathVariable(value = "id") Integer songsPlaylistID,
     		@RequestParam(name = "order") Integer order) {
         
-        SongsPlaylist item = songsPlaylistRepository.findById(songsPlaylistID)
-                .orElseThrow(() -> new ResourceNotFoundException("SongsPlaylist", "id", songsPlaylistID));
+        PlaylistRecord item = songsPlaylistRepository.findById(songsPlaylistID)
+                .orElseThrow(() -> new ResourceNotFoundException("PlaylistRecord", "id", songsPlaylistID));
 
         item.setOrder(order);
         
@@ -114,7 +114,7 @@ public class PlaylistController {
     
     @DeleteMapping("/songsplaylist/{id}")
     public ResponseEntity<?> deleteSongInPlaylist(@PathVariable(value = "id") Integer ID) {
-        SongsPlaylist item = songsPlaylistRepository.findById(ID)
+        PlaylistRecord item = songsPlaylistRepository.findById(ID)
                 .orElseThrow(() -> new ResourceNotFoundException("SongPlaylist", "id", ID));
 
         songsPlaylistRepository.delete(item);

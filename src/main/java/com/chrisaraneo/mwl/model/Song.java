@@ -50,41 +50,20 @@ public class Song implements Serializable {
 	private String website;
 
 	private Integer year;
-
-//	@ManyToMany
-//	@JoinTable(
-//		name="songsAlbum"
-//		, joinColumns={
-//			@JoinColumn(name="song_id", nullable=false)
-//			}
-//		, inverseJoinColumns={
-//			@JoinColumn(name="album_id", nullable=false)
-//			}
-//		)
-//	private Set<Album> albums;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
-	@ManyToMany(
-			mappedBy = "songs",
-			fetch = FetchType.EAGER,
-            cascade = { CascadeType.ALL })
-    private Set<Album> albums = new HashSet<Album>();
+	@ManyToMany(mappedBy = "songs")
+    private Set<Album> albums;
 
-	@JsonProperty(access = Access.WRITE_ONLY)
 	@ManyToMany
 	@JoinTable(
-		name="songsArtist"
-		, joinColumns={
-			@JoinColumn(name="song_id", nullable=false)
-			}
-		, inverseJoinColumns={
-			@JoinColumn(name="artist_id", nullable=false)
-			}
-		)
-	private Set<Artist> artists;
+		name="songs_artist",
+		joinColumns = @JoinColumn(name = "song_id"),
+		inverseJoinColumns = @JoinColumn(name = "artist_id"))
+	private Set<Artist> artists = new HashSet<Artist>();
 
 //	@OneToMany(mappedBy="song")
-//	private Set<SongsPlaylist> songsPlaylists;
+//	private Set<PlaylistRecord> playlistRecords;
 
 //	@OneToMany(mappedBy="song")
 //	private Set<SongURL> songURLs;

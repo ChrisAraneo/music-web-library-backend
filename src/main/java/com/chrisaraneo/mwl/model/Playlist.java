@@ -29,7 +29,7 @@ public class Playlist implements Serializable {
 	private User user;
 
 	@OneToMany(mappedBy="playlist")
-	private Set<SongsPlaylist> songsPlaylists;
+	private Set<PlaylistRecord> records;
 
 	public Playlist() { }
 
@@ -57,26 +57,26 @@ public class Playlist implements Serializable {
 		this.user = user;
 	}
 
-	public Set<SongsPlaylist> getSongsPlaylists() {
-		return this.songsPlaylists;
+	public Set<PlaylistRecord> getPlaylistRecords() {
+		return this.records;
 	}
 
-	public void setSongsPlaylists(Set<SongsPlaylist> songsPlaylists) {
-		this.songsPlaylists = songsPlaylists;
+	public void setPlaylistRecords(Set<PlaylistRecord> records) {
+		this.records = records;
 	}
 
-	public SongsPlaylist addSongsPlaylist(SongsPlaylist songsPlaylist) {
-		getSongsPlaylists().add(songsPlaylist);
-		songsPlaylist.setPlaylist(this);
+	public PlaylistRecord addPlaylistRecord(PlaylistRecord record) {
+		getPlaylistRecords().add(record);
+		record.setPlaylist(this);
 
-		return songsPlaylist;
+		return record;
 	}
 
-	public SongsPlaylist removeSongsPlaylist(SongsPlaylist songsPlaylist) {
-		getSongsPlaylists().remove(songsPlaylist);
-		songsPlaylist.setPlaylist(null);
+	public PlaylistRecord removePlaylistRecord(PlaylistRecord record) {
+		getPlaylistRecords().remove(record);
+		record.setPlaylist(null);
 
-		return songsPlaylist;
+		return record;
 	}
 
 }

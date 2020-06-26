@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,11 +32,13 @@ public class ArtistController {
     SongRepository songRepository;
 
     @GetMapping("/artists")
-    public List<Artist> getAllArtists() {
-        return artistRepository.findAll();
+    @CrossOrigin(origins = "*")
+    public Object getAllArtists() {
+        return artistRepository.findAllBy(); 
     }
     
     @GetMapping("/artists/{id}")
+    @CrossOrigin(origins = "*") 
     public Artist getArtistById(@PathVariable(value = "id") Integer artistID) {
         return artistRepository.findById(artistID)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistID));

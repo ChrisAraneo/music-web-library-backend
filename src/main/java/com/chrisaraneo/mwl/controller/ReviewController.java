@@ -42,27 +42,27 @@ public class ReviewController {
         		.orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewID));
     }
     
-    @PostMapping("/reviews")
-    public Review createReview(@Valid Review review,
-    		@RequestParam("album") Integer albumID,
-    		@RequestParam("user") Integer userID) throws ResourceNotFoundException {
-    	
-    	Album album = albumRepository.findById(albumID)
-    		.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
-    	
-    	User user = userRepository.findById(userID)
-        		.orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
-    	
-    	Set<Review> reviews = album.getReviews();
-    	reviews.add(review);
-    	album.setReviews(reviews);
-    	
-    	review.setAlbum(album);
-    	review.setUser(user);
-    	
-    	albumRepository.save(album);
-        return reviewRepository.save(review);
-    }
+//    @PostMapping("/reviews")
+//    public Review createReview(@Valid Review review,
+//    		@RequestParam("album") Integer albumID,
+//    		@RequestParam("user") Integer userID) throws ResourceNotFoundException {
+//    	
+//    	Album album = albumRepository.findById(albumID)
+//    		.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
+//    	
+//    	User user = userRepository.findById(userID)
+//        		.orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
+//    	
+//    	Set<Review> reviews = album.getReviews();
+//    	reviews.add(review);
+//    	album.setReviews(reviews);
+//    	
+//    	review.setAlbum(album);
+//    	review.setUser(user);
+//    	
+//    	albumRepository.save(album);
+//        return reviewRepository.save(review);
+//    }
 
     @PutMapping("/reviews/{id}")
     public Review updateReview(@PathVariable(value = "id") Integer reviewID,

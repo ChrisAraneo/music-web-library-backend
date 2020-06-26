@@ -1,191 +1,112 @@
 package com.chrisaraneo.mwl.model;
 
-import java.io.Serializable;
+import org.hibernate.annotations.NaturalId;
+
+import com.chrisaraneo.mwl.model.audit.DateAudit;
+
 import javax.persistence.*;
-import java.util.Date;
-import java.math.BigInteger;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
-@Table(name="users")
-@NamedQuery(name="User.findAll", query="SELECT u FROM User u")
-public class User implements Serializable {
-	private static final long serialVersionUID = 1L;
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+            "username"
+        }),
+        @UniqueConstraint(columnNames = {
+            "email"
+        })
+})
+public class User extends DateAudit {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="user_id", unique=true, nullable=false)
-	private Integer userID;
+    @NotBlank
+    @Size(max = 40)
+    private String name;
 
-	@Column(nullable=false)
-	private Boolean banned;
+    @NotBlank
+    @Size(max = 15)
+    private String username;
 
-	@Column(name="CURRENT_CONNECTIONS", nullable=false)
-	private BigInteger currentConnections;
+    @NaturalId
+    @NotBlank
+    @Size(max = 40)
+    @Email
+    private String email;
 
-	@Column(nullable=false, length=255)
-	private String email;
+    @NotBlank
+    @Size(max = 100)
+    private String password;
 
-	@Column(nullable=false, length=255)
-	private String name;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-	@Column(nullable=false, length=255)
-	private String password;
+    public User() {
 
-	@Column(name="reset_code", length=255)
-	private String resetCode;
+    }
 
-	@Temporal(TemporalType.DATE)
-	@Column(name="reset_date")
-	private Date resetDate;
+    public User(String name, String username, String email, String password) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 
-	@Column(name="super_user", nullable=false)
-	private Boolean superUser;
+    public Long getID() {
+        return id;
+    }
 
-	@Column(name="TOTAL_CONNECTIONS", nullable=false)
-	private BigInteger totalConnections;
+    public void setID(Long id) {
+        this.id = id;
+    }
 
-	@Column(length=32)
-	private String user;
+    public String getUsername() {
+        return username;
+    }
 
-//	@OneToMany(mappedBy="user")
-//	private Set<Playlist> playlists;
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-//	@OneToMany(mappedBy="user")
-//	private Set<Review> reviews;
+    public String getName() {
+        return name;
+    }
 
-	public User() { }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Integer getUserID() {
-		return this.userID;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setUserID(Integer userID) {
-		this.userID = userID;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public Boolean getBanned() {
-		return this.banned;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setBanned(Boolean banned) {
-		this.banned = banned;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public BigInteger getCurrentConnections() {
-		return this.currentConnections;
-	}
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
-	public void setCurrentConnections(BigInteger currentConnections) {
-		this.currentConnections = currentConnections;
-	}
-
-	public String getEmail() {
-		return this.email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getResetCode() {
-		return this.resetCode;
-	}
-
-	public void setResetCode(String resetCode) {
-		this.resetCode = resetCode;
-	}
-
-	public Date getResetDate() {
-		return this.resetDate;
-	}
-
-	public void setResetDate(Date resetDate) {
-		this.resetDate = resetDate;
-	}
-
-	public Boolean getSuperUser() {
-		return this.superUser;
-	}
-
-	public void setSuperUser(Boolean superUser) {
-		this.superUser = superUser;
-	}
-
-	public BigInteger getTotalConnections() {
-		return this.totalConnections;
-	}
-
-	public void setTotalConnections(BigInteger totalConnections) {
-		this.totalConnections = totalConnections;
-	}
-
-	public String getUser() {
-		return this.user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-//	public Set<Playlist> getPlaylists() {
-//		return this.playlists;
-//	}
-//
-//	public void setPlaylists(Set<Playlist> playlists) {
-//		this.playlists = playlists;
-//	}
-
-//	public Playlist addPlaylist(Playlist playlist) {
-//		getPlaylists().add(playlist);
-//		playlist.setUser(this);
-//
-//		return playlist;
-//	}
-//
-//	public Playlist removePlaylist(Playlist playlist) {
-//		getPlaylists().remove(playlist);
-//		playlist.setUser(null);
-//
-//		return playlist;
-//	}
-//
-//	public Set<Review> getReviews() {
-//		return this.reviews;
-//	}
-
-//	public void setReviews(Set<Review> reviews) {
-//		this.reviews = reviews;
-//	}
-//
-//	public Review addReview(Review review) {
-//		getReviews().add(review);
-//		review.setUser(this);
-//
-//		return review;
-//	}
-//
-//	public Review removeReview(Review review) {
-//		getReviews().remove(review);
-//		review.setUser(null);
-//
-//		return review;
-//	}
-
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+    
 }

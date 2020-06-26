@@ -1,7 +1,6 @@
 package com.chrisaraneo.mwl.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -48,10 +47,9 @@ public class CoverController {
     	Album album = albumRepository.findById(albumID)
     			.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
 	    
-    	Set<Album> set = cover.getAlbums();
-    	set.add(album);
-    	cover.setAlbums(set);
-
+    	album.setCover(cover);
+    	
+    	albumRepository.save(album);
         return coverRepository.save(cover);
     }
 

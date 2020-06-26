@@ -1,33 +1,44 @@
 package com.chrisaraneo.mwl.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.Song;
 import com.chrisaraneo.mwl.repository.SongRepository;
 
+@RestController
+@RequestMapping("/api")
 public class SongController {
 
     @Autowired
     SongRepository songRepository;
 
+//    @GetMapping("/songs")
+//    @CrossOrigin(origins = "*")
+//    public List<Song> getSongs() {
+//        return songRepository.findAll();
+//    }
+    
     @GetMapping("/songs")
-    public List<Song> getSongs() {
-        return songRepository.findAll();
+    @CrossOrigin(origins = "*")
+    public Object getAllSongs() {
+        return songRepository.findAllBy(); 
     }
     
     @GetMapping("/songs/{id}")
+    @CrossOrigin(origins = "*")
     public Song getSongByID(@PathVariable(value = "id") Integer songID) {
         return songRepository.findById(songID)
         		.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
