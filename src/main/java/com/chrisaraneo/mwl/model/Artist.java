@@ -48,7 +48,18 @@ public class Artist implements Serializable {
 	@ManyToMany(mappedBy = "artists")
     private Set<Song> songs;
 
-	public Artist() {}
+	public Artist() { }
+	
+	public Artist(Artist artist) {
+		this.setArtistID(artist.getArtistID());
+		this.setArtistName(artist.getArtistName());
+		this.setArtistType(artist.getArtistType());
+		this.setBirthDate(artist.getBirthDate());
+		this.setCountry(artist.getCountry());
+		this.setFirstName(artist.getFirstName());
+		this.setLastName(artist.getLastName());
+		this.setSongs(artist.getSongs());
+	}
 
 	public Integer getArtistID() {
 		return this.artistID;

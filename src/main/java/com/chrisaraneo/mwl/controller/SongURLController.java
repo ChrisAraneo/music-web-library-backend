@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,6 +38,7 @@ public class SongURLController {
     }
     
     @PostMapping("/songurls")
+    @Secured("ROLE_ADMIN")
     public SongURL createSongURL(@Valid SongURL url, @RequestParam("song") Integer songID) throws ResourceNotFoundException {
     	Song song = songRepository.findById(songID)
     		.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songID));
@@ -46,6 +48,7 @@ public class SongURLController {
     }
 
     @PutMapping("/songurls/{id}")
+    @Secured("ROLE_ADMIN")
     public SongURL updateSongURL(@PathVariable(value = "id") Integer songURLID,
                                            @Valid @ModelAttribute SongURL modified) {
 
@@ -59,6 +62,7 @@ public class SongURLController {
     }
 
     @DeleteMapping("/songurls/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> deleteSongURL(@PathVariable(value = "id") Integer songURLID) {
         SongURL url = songURLRepository.findById(songURLID)
                 .orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songURLID));

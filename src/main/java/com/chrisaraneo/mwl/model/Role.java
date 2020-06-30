@@ -16,12 +16,15 @@ public class Role {
     @Column(length = 60)
     private RoleName name;
 
-    public Role() {
-
-    }
+    public Role() { }
 
     public Role(RoleName name) {
         this.name = name;
+    }
+    
+    public Role(Role role) {
+    	this.setId(role.getId());
+    	this.setName(role.getName());
     }
 
     public Long getId() {

@@ -31,16 +31,17 @@ public class Album implements Serializable {
 
 	@OneToMany(mappedBy="album")
 	private Set<Review> reviews;
-
-	@ManyToMany
-	@JoinTable(
-		name="songs_album",
-		joinColumns = @JoinColumn(name = "album_id"),
-		inverseJoinColumns = @JoinColumn(name = "song_id"))
-	private Set<Song> songs = new HashSet<Song>();
-
+	
 	
 	public Album() { }
+	
+	public Album(Album album) {
+		this.setAlbumID(album.getAlbumID());
+		this.setCover(album.getCover());
+		this.setReviews(album.getReviews());
+		this.setTitle(album.getTitle());
+		this.setYear(album.getYear());
+	}
 
 	public Integer getAlbumID() {
 		return this.albumID;
@@ -94,14 +95,6 @@ public class Album implements Serializable {
 		review.setAlbum(null);
 
 		return review;
-	}
-
-	public Set<Song> getSongs() {
-		return this.songs;
-	}
-
-	public void setSongs(Set<Song> songs) {
-		this.songs = songs;
 	}
 
 }

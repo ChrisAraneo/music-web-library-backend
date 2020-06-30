@@ -5,6 +5,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.chrisaraneo.mwl.model.extended.UserUndetailed;
+
 import java.util.Set;
 
 
@@ -25,13 +27,20 @@ public class Playlist implements Serializable {
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", nullable=false)
-	@NotNull
+//	@NotNull
 	private User user;
-
-	@OneToMany(mappedBy="playlist")
-	private Set<PlaylistRecord> records;
+	
+//	@OneToMany(mappedBy="id")
+//	private Set<SongPlaylist> songsInPlaylist;
+	
 
 	public Playlist() { }
+	
+	public Playlist(Playlist playlist) {
+		this.setPlaylistID(playlist.getPlaylistID());
+		this.setTitle(playlist.getTitle());
+		this.setUser(playlist.getUser());
+	}
 
 	public Integer getPlaylistID() {
 		return this.playlistID;
@@ -50,33 +59,20 @@ public class Playlist implements Serializable {
 	}
 
 	public User getUser() {
-		return this.user;
+		UserUndetailed uu = new UserUndetailed(user);
+		return uu;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public Set<PlaylistRecord> getPlaylistRecords() {
-		return this.records;
-	}
-
-	public void setPlaylistRecords(Set<PlaylistRecord> records) {
-		this.records = records;
-	}
-
-	public PlaylistRecord addPlaylistRecord(PlaylistRecord record) {
-		getPlaylistRecords().add(record);
-		record.setPlaylist(this);
-
-		return record;
-	}
-
-	public PlaylistRecord removePlaylistRecord(PlaylistRecord record) {
-		getPlaylistRecords().remove(record);
-		record.setPlaylist(null);
-
-		return record;
-	}
+//	public Set<SongPlaylist> getSongs() {
+//		return this.songsInPlaylist;
+//	}
+//
+//	public void setSongs(Set<SongPlaylist> songs) {
+//		this.songsInPlaylist = songs;
+//	}
 
 }

@@ -5,6 +5,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity@Table(name="songurls")
@@ -27,6 +29,12 @@ public class SongURL implements Serializable {
 	private Song song;
 
 	public SongURL() { }
+	
+	public SongURL(SongURL url) {
+		this.setSong(url.getSong());
+		this.setSongURLID(url.getSongURLID());
+		this.setURL(url.getURL());
+	}
 
 	public Integer getSongURLID() {
 		return this.songURLID;
@@ -44,6 +52,7 @@ public class SongURL implements Serializable {
 		this.URL = URL;
 	}
 
+	@JsonIgnore
 	public Song getSong() {
 		return this.song;
 	}

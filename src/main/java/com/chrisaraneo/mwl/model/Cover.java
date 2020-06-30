@@ -2,7 +2,6 @@ package com.chrisaraneo.mwl.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.Set;
 
 
 @Entity
@@ -23,6 +22,11 @@ public class Cover implements Serializable {
 //	private Set<Album> albums;
 
 	public Cover() { }
+	
+	public Cover(Cover cover) {
+		this.setCoverID(cover.getCoverID());
+		this.setData(cover.getData());
+	}
 
 	public Integer getCoverID() {
 		return this.coverID;

@@ -6,6 +6,7 @@ import com.chrisaraneo.mwl.repository.ArtistTypeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,11 +32,13 @@ public class ArtistTypeController {
     }
 
     @PostMapping("/artisttypes")
+    @Secured("ROLE_ADMIN")
     public ArtistType createArtistType(@Valid ArtistType artistType) {
         return artistTypeRepository.save(artistType);
     }
 
     @PutMapping("/artisttypes/{id}")
+    @Secured("ROLE_ADMIN")
     public ArtistType updateArtistType(@PathVariable(value = "id") Integer artistTypeID,
                                            @Valid ArtistType modified) {
 
@@ -49,6 +52,7 @@ public class ArtistTypeController {
     }
 
     @DeleteMapping("/artisttypes/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> deleteArtistType(@PathVariable(value = "id") Integer artistTypeID) {
         ArtistType artistType = artistTypeRepository.findById(artistTypeID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistType", "id", artistTypeID));

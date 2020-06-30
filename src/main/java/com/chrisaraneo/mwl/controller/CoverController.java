@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,7 @@ public class CoverController {
     }
 
     @PostMapping("/covers")
+    @Secured("ROLE_ADMIN")
     public Cover createCover(@Valid Cover cover, @RequestParam("album") Integer albumID) {
     	Album album = albumRepository.findById(albumID)
     			.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
@@ -54,6 +56,7 @@ public class CoverController {
     }
 
     @PutMapping("/covers/{id}")
+    @Secured("ROLE_ADMIN")
     public Cover updateCover(@PathVariable(value = "id") Integer coverID,
                                            @Valid Cover modified) {
 
@@ -66,6 +69,7 @@ public class CoverController {
     }
 
     @DeleteMapping("/covers/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> deleteCover(@PathVariable(value = "id") Integer coverID) {
         Cover cover = coverRepository.findById(coverID)
                 .orElseThrow(() -> new ResourceNotFoundException("Cover", "id", coverID));

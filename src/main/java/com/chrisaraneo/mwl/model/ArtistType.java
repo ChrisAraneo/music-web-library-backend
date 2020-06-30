@@ -21,6 +21,11 @@ public class ArtistType implements Serializable {
 	private String name;
 
 	public ArtistType() {}
+	
+	public ArtistType(ArtistType artistType) {
+		this.setArtistTypeID(artistType.getArtistTypeID());
+		this.setName(artistType.getName());
+	}
 
 	public Integer getArtistTypeID() {
 		return this.artistTypeID;

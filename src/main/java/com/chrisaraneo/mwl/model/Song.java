@@ -3,6 +3,7 @@ package com.chrisaraneo.mwl.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.chrisaraneo.mwl.model.extended.ArtistUndetailed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -51,9 +52,9 @@ public class Song implements Serializable {
 
 	private Integer year;
 	
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@ManyToMany(mappedBy = "songs")
-    private Set<Album> albums;
+//	@JsonProperty(access = Access.WRITE_ONLY)
+//	@ManyToMany(mappedBy = "songs")
+//    private Set<SongAlbum> albums;
 
 	@ManyToMany
 	@JoinTable(
@@ -61,14 +62,35 @@ public class Song implements Serializable {
 		joinColumns = @JoinColumn(name = "song_id"),
 		inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<Artist> artists = new HashSet<Artist>();
+	
+//	@JsonProperty(access = Access.WRITE_ONLY)
+//	@ManyToMany(mappedBy = "songs")
+//    private Set<SongAlbum> albums;
 
+	
 //	@OneToMany(mappedBy="song")
-//	private Set<PlaylistRecord> playlistRecords;
+//	private Set<SongAlbum> albums;
 
 //	@OneToMany(mappedBy="song")
 //	private Set<SongURL> songURLs;
 
 	public Song() { }
+	
+	public Song(Song song) {
+		this.setArtists(song.getArtists());
+		this.setBpm(song.getBpm());
+		this.setComment(song.getComment());
+		this.setGenre(song.getGenre());
+		this.setLanguage(song.getLanguage());
+		this.setLength(song.getLength());
+		this.setMainKey(song.getMainKey());
+		this.setPublisher(song.getPublisher());
+		this.setSongID(song.getSongID());
+		this.setTerms(song.getTerms());
+		this.setTitle(song.getTitle());
+		this.setWebsite(song.getWebsite());
+		this.setYear(song.getYear());
+	}
 
 	public Integer getSongID() {
 		return this.songID;
@@ -166,16 +188,20 @@ public class Song implements Serializable {
 		this.year = year;
 	}
 
-	public Set<Album> getAlbums() {
-		return this.albums;
-	}
-
-	public void setAlbums(Set<Album> albums) {
-		this.albums = albums;
-	}
+//	public Set<SongAlbum> getAlbums() {
+//		return this.albums;
+//	}
+//
+//	public void setAlbums(Set<SongAlbum> albums) {
+//		this.albums = albums;
+//	}
 
 	public Set<Artist> getArtists() {
-		return this.artists;
+		Set<Artist> aus = new HashSet<Artist>();
+		for(Artist artist : artists) {
+			aus.add(new ArtistUndetailed(artist));
+		}
+		return aus;
 	}
 
 	public void setArtists(Set<Artist> artists) {

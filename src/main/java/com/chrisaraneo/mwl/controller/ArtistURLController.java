@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,7 +38,10 @@ public class ArtistURLController {
     }
     
     @PostMapping("/artisturls")
-    public ArtistURL createArtistURL(@Valid ArtistURL url, @RequestParam("artist") Integer artistID) throws ResourceNotFoundException {
+    @Secured("ROLE_ADMIN")
+    public ArtistURL createArtistURL(@Valid ArtistURL url) throws ResourceNotFoundException {
+    	Integer artistID = url.getArtist().getArtistID();
+    	
     	Artist artist = artistRepository.findById(artistID)
     		.orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistID));
     	url.setArtist(artist);
@@ -46,6 +50,7 @@ public class ArtistURLController {
     }
 
     @PutMapping("/artisturls/{id}")
+    @Secured("ROLE_ADMIN")
     public ArtistURL updateArtistURL(@PathVariable(value = "id") Integer artistURLID,
                                            @Valid @ModelAttribute ArtistURL modified) {
 
@@ -59,6 +64,7 @@ public class ArtistURLController {
     }
 
     @DeleteMapping("/artisturls/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> deleteArtistURL(@PathVariable(value = "id") Integer artistURLID) {
         ArtistURL url = artistURLRepository.findById(artistURLID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistURLID));

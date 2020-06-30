@@ -37,6 +37,14 @@ public class Review implements Serializable {
 	private User user;
 
 	public Review() { }
+	
+	public Review(Review review) {
+		this.setAlbum(review.getAlbum());
+		this.setContent(review.getContent());
+		this.setReviewID(review.getReviewID());
+		this.setTitle(review.getTitle());
+		this.setUser(review.getUser());
+	}
 
 	public Integer getReviewID() {
 		return this.reviewID;

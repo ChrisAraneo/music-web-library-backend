@@ -1,20 +1,17 @@
 package com.chrisaraneo.mwl.controller;
 
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
-import com.chrisaraneo.mwl.model.Album;
 import com.chrisaraneo.mwl.model.Review;
-import com.chrisaraneo.mwl.model.User;
 import com.chrisaraneo.mwl.repository.AlbumRepository;
 import com.chrisaraneo.mwl.repository.ReviewRepository;
 import com.chrisaraneo.mwl.repository.UserRepository;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -65,6 +62,7 @@ public class ReviewController {
 //    }
 
     @PutMapping("/reviews/{id}")
+    @Secured("ROLE_ADMIN")
     public Review updateReview(@PathVariable(value = "id") Integer reviewID,
                                            @Valid @ModelAttribute Review modified) {
 
@@ -78,6 +76,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> deleteReview(@PathVariable(value = "id") Integer reviewID) {
         Review review = reviewRepository.findById(reviewID)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewID));
