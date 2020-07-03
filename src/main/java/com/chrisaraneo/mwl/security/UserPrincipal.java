@@ -1,9 +1,14 @@
 package com.chrisaraneo.mwl.security;
 
+import com.chrisaraneo.mwl.model.RoleName;
 import com.chrisaraneo.mwl.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -113,5 +118,25 @@ public class UserPrincipal implements UserDetails {
     public int hashCode() {
 
         return Objects.hash(id);
+    }
+    
+	public boolean hasRole(String roleName) {
+    	SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null) {
+        	 return false;
+        }
+
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null) {
+        	 return false;
+        }
+
+        for (GrantedAuthority auth : this.getAuthorities()) {
+            if (roleName.equals(auth.getAuthority())) {
+            	return true;
+            }
+        }
+        
+        return false;
     }
 }

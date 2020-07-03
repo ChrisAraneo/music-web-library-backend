@@ -62,4 +62,23 @@ public class SongPlaylistController {
 	  	return sp;
 	}
 	
+	@DeleteMapping("/playlist/{playlistID}/{songID}/{track}")
+	@Secured("ROLE_ADMIN")
+	public ResponseEntity<?> removeSongFromPlaylist(
+	  		@PathVariable(value = "playlistID") Integer playlistID,
+	  		@PathVariable(value = "songID") Integer songID,
+	  		@PathVariable(value = "track") Integer track) {
+	  	
+	  	Playlist playlist = playlistRepository.findById(playlistID)
+	              .orElseThrow(() -> new ResourceNotFoundException("Playlist", "id", playlistID));
+	  	
+	  	Song song = songRepository.findById(songID)
+	              .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
+	  	
+	  	SongPlaylistKey id = new SongPlaylistKey(track, playlist);
+	  	songPlaylistRepository.deleteById(id);
+	  	
+	  	return ResponseEntity.ok().build();
+	}
+	
 }

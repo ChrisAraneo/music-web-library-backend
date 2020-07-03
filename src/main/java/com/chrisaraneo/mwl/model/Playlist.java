@@ -3,11 +3,9 @@ package com.chrisaraneo.mwl.model;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import com.chrisaraneo.mwl.model.extended.UserUndetailed;
 
-import java.util.Set;
 
 
 @Entity

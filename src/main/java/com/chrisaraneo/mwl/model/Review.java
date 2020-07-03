@@ -85,5 +85,13 @@ public class Review implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	public void removeAlbum(Album album) {
+		if(this.album != null) {
+			if(this.album.getAlbumID() == album.getAlbumID()) {
+				this.album = null;
+			}
+		}
+	}
 
 }
