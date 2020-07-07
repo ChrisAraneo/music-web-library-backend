@@ -5,6 +5,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.chrisaraneo.mwl.model.extended.UserUndetailed;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name="reviews")
@@ -70,6 +73,7 @@ public class Review implements Serializable {
 		this.title = title;
 	}
 
+	@JsonIgnore
 	public Album getAlbum() {
 		return this.album;
 	}
@@ -79,7 +83,8 @@ public class Review implements Serializable {
 	}
 
 	public User getUser() {
-		return this.user;
+		UserUndetailed uu = new UserUndetailed(user);
+		return uu;
 	}
 
 	public void setUser(User user) {

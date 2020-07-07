@@ -3,6 +3,7 @@ package com.chrisaraneo.mwl.model;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -22,7 +23,8 @@ public class Album implements Serializable {
 	@NotBlank
 	private String title;
 
-	private int year;
+	@NotNull
+	private Integer year;
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cover_id")
