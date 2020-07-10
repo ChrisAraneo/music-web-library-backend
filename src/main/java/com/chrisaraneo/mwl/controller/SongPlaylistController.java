@@ -1,5 +1,9 @@
 package com.chrisaraneo.mwl.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,6 +32,16 @@ import com.chrisaraneo.mwl.repository.UserRepository;
 import com.chrisaraneo.mwl.security.CurrentUser;
 import com.chrisaraneo.mwl.security.UserPrincipal;
 
+class SortByTrack implements Comparator<SongPlaylist> 
+{ 
+	@Override
+	public int compare(SongPlaylist arg0, SongPlaylist arg1) {
+		SongPlaylistKey key0 = arg0.getId();
+		SongPlaylistKey key1 = arg0.getId();
+		return key0.getTrackNumber() - key1.getTrackNumber();
+	} 
+} 
+
 @RestController
 @RequestMapping("/api")
 public class SongPlaylistController {
@@ -44,21 +58,46 @@ public class SongPlaylistController {
     @Autowired
     UserRepository userRepository;
 	
+    private Integer updateTracksAndReturnNext(Playlist playlist) {
+    	Integer playlistID = playlist.getPlaylistID();
+	  	
+	  	// Updating 
+	  	Set<SongPlaylist> sps = songPlaylistRepository.findAllSongsInPlaylist(playlistID);
+	  	List<SongPlaylist> list = new ArrayList<SongPlaylist>();
+	  	for(SongPlaylist sp : sps) {
+	  		list.add(sp);
+	  	}
+	  	Collections.sort(list, new SortByTrack());
+	  	int length = list.size();
+	  	for(int i=0; i<length; i++) {
+	  		SongPlaylist ps = list.get(i);
+	  		ps.setId(new SongPlaylistKey(i, playlist));
+	  		songPlaylistRepository.save(ps);
+	  	}
+	  	songPlaylistRepository.flush();
+	  	
+	  	playlistRepository.save(playlist);
+	  	playlistRepository.flush();
+	  	
+	  	return length;
+    }
     
-	@PostMapping("/playlists/{playlistID}/{songID}/{track}")
+	@PostMapping("/playlists/{playlistID}/{songID}")
 	@Secured("ROLE_ADMIN")
 	public SongPlaylist addSongToPlaylist(
 	  		@PathVariable(value = "playlistID") Integer playlistID,
-	  		@PathVariable(value = "songID") Integer songID,
-	  		@PathVariable(value = "track") Integer track) {
+	  		@PathVariable(value = "songID") Integer songID) {
 	  	
 	  	Playlist playlist = playlistRepository.findById(playlistID)
 	              .orElseThrow(() -> new ResourceNotFoundException("Playlist", "id", playlistID));
 	  	
+	  	// Update tracks...
+	  	Integer next = this.updateTracksAndReturnNext(playlist);
+	  	
 	  	Song song = songRepository.findById(songID)
 	              .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 	  	
-	  	SongPlaylistKey id = new SongPlaylistKey(track, playlist);
+	  	SongPlaylistKey id = new SongPlaylistKey(next, playlist);
 	  	SongPlaylist sp = songPlaylistRepository.save(new SongPlaylist(id, song));
 	  	return sp;
 	}
@@ -83,7 +122,8 @@ public class SongPlaylistController {
     			SongPlaylist song = songPlaylistRepository.findSongByTrackInPlaylist(track, playlistID);
     		  	songPlaylistRepository.deleteById(song.getId());
     		  	songPlaylistRepository.flush();
-    		  	playlistRepository.flush();
+    		  	
+    		  	this.updateTracksAndReturnNext(playlist);
     		  	
     		  	Playlist updated = playlistRepository.findById(playlistID)
     		  			.orElseThrow(() -> new ResourceNotFoundException("Playlist", "id", playlistID));

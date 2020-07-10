@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,7 @@ import com.chrisaraneo.mwl.model.Playlist;
 import com.chrisaraneo.mwl.model.RoleName;
 import com.chrisaraneo.mwl.model.SongPlaylist;
 import com.chrisaraneo.mwl.model.User;
+import com.chrisaraneo.mwl.model.extended.EmptyJson;
 import com.chrisaraneo.mwl.model.extended.PlaylistWithSongs;
 import com.chrisaraneo.mwl.repository.PlaylistRepository;
 import com.chrisaraneo.mwl.repository.SongPlaylistRepository;
@@ -126,22 +128,21 @@ public class PlaylistController {
     
     private void removeAllSongsFromPlaylist(Playlist playlist) {
     	Integer playlistID = playlist.getPlaylistID();
-    	// Removing all song-playlist records
     	Set<SongPlaylist> sp = songPlaylistRepository.findAllSongsInPlaylist(playlistID);
-    	SongPlaylistController spc = new SongPlaylistController();
     	for(SongPlaylist song : sp) {
     		Integer songID = song.getSong().getSongID();
     		Integer track = song.getId().getTrackNumber();
     		SongPlaylistKey id = new SongPlaylistKey(track, playlist);
     		songPlaylistRepository.deleteById(id);
-//    		spc.removeSongFromPlaylist(playlistID, songID, track);
     	}
+    	songPlaylistRepository.flush();
+    	playlistRepository.flush();
     }
     
     @DeleteMapping("/playlists/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deletePlaylist(
+    public ResponseEntity deletePlaylist(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer playlistID) {
     	
@@ -151,7 +152,8 @@ public class PlaylistController {
     	if(currentUser.hasRole((RoleName.ROLE_ADMIN).toString())) {
     		removeAllSongsFromPlaylist(playlist);
     		playlistRepository.delete(playlist);
-    		return ResponseEntity.ok().build();
+    		playlistRepository.flush();
+    		return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
     	} else {
     		String email = currentUser.getEmail();
     		String username = currentUser.getUsername();
@@ -161,10 +163,11 @@ public class PlaylistController {
     			if(u != null) {
     				Optional<User> creator = userRepository.findByUsernameOrEmail(u.getUsername(), u.getEmail());
     				if(creator.isPresent()) {
-    					if(creator.get().equals(user.get())) {
+    					if(creator.get().getID() == u.getID()) {
     						removeAllSongsFromPlaylist(playlist);
     						playlistRepository.delete(playlist);
-    						return ResponseEntity.ok().build(); // TODO (?)
+    						playlistRepository.flush();
+    						return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
     					} else {
     						System.out.println("NOT EQUALS");
     					}
@@ -174,7 +177,8 @@ public class PlaylistController {
     	}
     	
     	// TODO
-    	return ResponseEntity.badRequest().build();
+    	throw new ResourceNotFoundException("Playlist", "id", playlistID);
+//    	return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
     }
     
 //    @PostMapping("/playlists/{playlistID}/{songID}")
