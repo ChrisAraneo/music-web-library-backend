@@ -61,25 +61,33 @@ public class SongPlaylistController {
     private Integer updateTracksAndReturnNext(Playlist playlist) {
     	Integer playlistID = playlist.getPlaylistID();
 	  	
-	  	// Updating 
+	  	// Getting elements
 	  	Set<SongPlaylist> sps = songPlaylistRepository.findAllSongsInPlaylist(playlistID);
 	  	List<SongPlaylist> list = new ArrayList<SongPlaylist>();
 	  	for(SongPlaylist sp : sps) {
 	  		list.add(sp);
 	  	}
+	  	
+	  	// Sorting by track
 	  	Collections.sort(list, new SortByTrack());
+	  	
+	  	// Updating - removing old and adding new
 	  	int length = list.size();
 	  	for(int i=0; i<length; i++) {
 	  		SongPlaylist ps = list.get(i);
-	  		ps.setId(new SongPlaylistKey(i, playlist));
-	  		songPlaylistRepository.save(ps);
+	  		Song song = ps.getSong();
+	  		
+	  		songPlaylistRepository.delete(ps);
+	  		
+	  		SongPlaylist ps2 = new SongPlaylist();
+	  		ps2.setId(new SongPlaylistKey(i+1, playlist));
+	  		ps2.setSong(song);
+	  		
+	  		songPlaylistRepository.save(ps2);
+	  		songPlaylistRepository.flush();
 	  	}
-	  	songPlaylistRepository.flush();
 	  	
-	  	playlistRepository.save(playlist);
-	  	playlistRepository.flush();
-	  	
-	  	return length;
+	  	return length + 1;
     }
     
 	@PostMapping("/playlists/{playlistID}/{songID}")
