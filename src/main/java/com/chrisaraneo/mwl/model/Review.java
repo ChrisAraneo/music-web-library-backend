@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.chrisaraneo.mwl.model.extended.AlbumUndetailed;
 import com.chrisaraneo.mwl.model.extended.UserUndetailed;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -73,9 +74,9 @@ public class Review implements Serializable {
 		this.title = title;
 	}
 
-	@JsonIgnore
 	public Album getAlbum() {
-		return this.album;
+		AlbumUndetailed album = new AlbumUndetailed(this.album);
+		return album;
 	}
 
 	public void setAlbum(Album album) {

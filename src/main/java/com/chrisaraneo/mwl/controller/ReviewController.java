@@ -5,6 +5,7 @@ import com.chrisaraneo.mwl.model.Album;
 import com.chrisaraneo.mwl.model.Review;
 import com.chrisaraneo.mwl.model.RoleName;
 import com.chrisaraneo.mwl.model.User;
+import com.chrisaraneo.mwl.model.extended.EmptyJson;
 import com.chrisaraneo.mwl.repository.AlbumRepository;
 import com.chrisaraneo.mwl.repository.ReviewRepository;
 import com.chrisaraneo.mwl.repository.UserRepository;
@@ -43,36 +44,19 @@ public class ReviewController {
     
     @GetMapping("/reviews/{id}")
     public Review getReviewByID(@PathVariable(value = "id") Integer reviewID) {
-        return reviewRepository.findById(reviewID)
+        Review review = reviewRepository.findById(reviewID)
         		.orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewID));
+        
+        return review;
     }
     
-//    @PostMapping("/playlists")
-//    
-//    public Playlist createPlaylist(
-//    		@Valid Playlist playlist,
-//    		@CurrentUser UserPrincipal currentUser) {
-//    	
-//    	String title = playlist.getTitle();
-//    	if(title != null && !title.isEmpty()) {
-//    		Optional<User> user = userRepository.findByUsernameOrEmail(currentUser.getUsername(), currentUser.getPassword());
-//	    	if(user.isPresent()) {
-//	    		playlist.setUser(user.get());
-//	    		return playlistRepository.save(playlist);
-//	    	}
-//    	}
-//    	
-//        return null;
-//    }
-    
-    @PostMapping("/reviews")
+    @PostMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
     public Review createReview(
     		@Valid Review review,
     		@CurrentUser UserPrincipal currentUser,
-    		@RequestParam("album") Integer albumID,
-    		@RequestParam("user") Integer userID) throws ResourceNotFoundException {
+    		@PathVariable(value = "id") Integer albumID) throws ResourceNotFoundException {
     	
     	Album album = albumRepository.findById(albumID)
     		.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
@@ -82,7 +66,6 @@ public class ReviewController {
     	User user = userRepository.findByUsernameOrEmail(username, email)
         		.orElseThrow(() -> new ResourceNotFoundException("User", "usernameOrEmail", username+" "+email));
     	
-
     	album.addReview(review);
     	
     	review.setAlbum(album);
@@ -95,7 +78,7 @@ public class ReviewController {
     @PutMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
-    public Review updateReview(
+    public Object updateReview(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer reviewID,
     		@Valid @ModelAttribute Review modified) {
@@ -118,19 +101,8 @@ public class ReviewController {
     		}
     	}
     	
-    	return null;
+    	return new EmptyJson();
     }
-
-//    @DeleteMapping("/reviews/{id}")
-//    @Secured("ROLE_ADMIN")
-//    public ResponseEntity<?> deleteReview(@PathVariable(value = "id") Integer reviewID) {
-//        Review review = reviewRepository.findById(reviewID)
-//                .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewID));
-//
-//        reviewRepository.delete(review);
-//
-//        return ResponseEntity.ok().build();
-//    }
     
     @DeleteMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
