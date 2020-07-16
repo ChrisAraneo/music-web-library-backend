@@ -1,0 +1,17 @@
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+# DB URL, for example:jdbc:mysql://localhost:3306/music_db?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+spring.datasource.url = ???
+spring.datasource.username = ???
+spring.datasource.password = ???
+
+## Google reCAPTCHA
+google.recaptcha.key.site = ???
+google.recaptcha.key.secret = ???
+
+## JWT
+app.jwtSecret = ???
+app.jwtExpirationInMs = ???
+
+## Hibernate Properties
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.ddl-auto = update

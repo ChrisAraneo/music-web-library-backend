@@ -23,3 +23,7 @@ dist/
 nbdist/
 .nb-gradle/
 .elasticbeanstalk
+
+### Application.properties
+src/main/resources/application.properties
+
