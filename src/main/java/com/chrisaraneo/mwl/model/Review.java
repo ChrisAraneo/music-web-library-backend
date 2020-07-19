@@ -32,12 +32,10 @@ public class Review implements Serializable {
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="album_id", nullable=false)
-	@NotNull
 	private Album album;
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", nullable=false)
-	@NotNull
 	private User user;
 
 	public Review() { }

@@ -19,7 +19,7 @@ public class CaptchaAspect {
     @Autowired
     private CaptchaValidator captchaValidator;
 
-    private static final String CAPTCHA_HEADER_NAME = "captcha-response";
+    private static final String CAPTCHA_HEADER_NAME = "Captcha-Response";
 
     @Around("@annotation(RequiresCaptcha)")
     public Object validateCaptcha(ProceedingJoinPoint joinPoint) throws Throwable {

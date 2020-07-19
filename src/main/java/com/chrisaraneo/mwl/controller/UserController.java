@@ -52,10 +52,11 @@ public class UserController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
+    
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
+    	Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
                         loginRequest.getPassword()
@@ -69,8 +70,9 @@ public class UserController {
         Optional<User> user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
         if(user.isPresent()) {
         	Set<Role> roles = user.get().getRoles();
-        	return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, roles));
+        	return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, roles, user.get()));
         }
+        
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
@@ -112,46 +114,4 @@ public class UserController {
         return userRepository.findAll();
     }
     
-//    @GetMapping("/users/{id}")
-//    public User getUserById(@PathVariable(value = "id") Integer userID) {
-//        return userRepository.findById(userID)
-//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
-//    }
-//
-//    @PostMapping("/users")
-//    @Secured("ROLE_ADMIN")
-//    public User createUser(@Valid User user) {
-//        return userRepository.save(user);
-//    }
-
-//    @PutMapping("/users/{id}")
-//    public User updateUser(@PathVariable(value = "id") Integer userID,
-//                                           @Valid User modified) {
-//
-//        User user = userRepository.findById(userID)
-//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
-//
-//        user.setBanned(modified.getBanned());
-//        user.setCurrentConnections(modified.getCurrentConnections());
-//        user.setEmail(modified.getEmail());
-//        user.setName(modified.getName());
-//        user.setPassword(modified.getPassword());
-//        user.setResetCode(modified.getResetCode());
-//        user.setResetDate(modified.getResetDate());
-//        user.setSuperUser(modified.getSuperUser());
-//        user.setTotalConnections(modified.getTotalConnections());
-//        user.setUser(modified.getUser());
-//
-//        return userRepository.save(user);
-//    }
-
-//    @DeleteMapping("/users/{id}")
-//    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Integer userID) {
-//        User user = userRepository.findById(userID)
-//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
-//
-//        userRepository.delete(user);
-//
-//        return ResponseEntity.ok().build();
-//    }
 }

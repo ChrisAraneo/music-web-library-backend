@@ -10,6 +10,7 @@ import com.chrisaraneo.mwl.repository.AlbumRepository;
 import com.chrisaraneo.mwl.repository.ReviewRepository;
 import com.chrisaraneo.mwl.repository.UserRepository;
 import com.chrisaraneo.mwl.security.CurrentUser;
+import com.chrisaraneo.mwl.security.RequiresCaptcha;
 import com.chrisaraneo.mwl.security.UserPrincipal;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class ReviewController {
     @PostMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
+    @RequiresCaptcha
     public Review createReview(
     		@Valid Review review,
     		@CurrentUser UserPrincipal currentUser,
@@ -78,13 +80,18 @@ public class ReviewController {
     @PutMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
+    @RequiresCaptcha
     public Object updateReview(
+    		@Valid @ModelAttribute Review modified,
     		@CurrentUser UserPrincipal currentUser,
-    		@PathVariable(value = "id") Integer reviewID,
-    		@Valid @ModelAttribute Review modified) {
+    		@PathVariable(value = "id") Integer reviewID) {
 
     	Review review = reviewRepository.findById(reviewID)
         		.orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewID));
+    	
+    	Integer albumID = modified.getAlbum().getAlbumID();
+    	Album album = albumRepository.findById(albumID)
+        		.orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
 
         String email = currentUser.getEmail();
     	String username = currentUser.getUsername();
@@ -93,9 +100,8 @@ public class ReviewController {
     	if(user.isPresent()) {
     		if(review.getUser().getID() == user.get().getID()) {
     			review.setUser(user.get());
-	    		review.setAlbum(modified.getAlbum());
+	    		review.setAlbum(album);
 	    		review.setContent(modified.getContent());
-	    		review.setReviewID(modified.getReviewID());
 	    		review.setTitle(modified.getTitle());
 	    		return reviewRepository.save(review);
     		}
@@ -107,7 +113,7 @@ public class ReviewController {
     @DeleteMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteReview(
+    public Object deleteReview(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer reviewID) {
     	
@@ -136,9 +142,7 @@ public class ReviewController {
     						album.removeReview(review);
     			    		review.removeAlbum(album);
     			    		reviewRepository.deleteById(reviewID);
-    			    		return ResponseEntity.ok().build();
-    					} else {
-    						System.out.println("NOT EQUALS");
+    			    		return new EmptyJson();
     					}
     				}
     			}
