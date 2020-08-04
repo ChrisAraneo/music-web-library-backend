@@ -1,5 +1,7 @@
 package com.chrisaraneo.mwl.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -14,6 +16,7 @@ import com.chrisaraneo.mwl.keys.SongAlbumKey;
 import com.chrisaraneo.mwl.model.Album;
 import com.chrisaraneo.mwl.model.Song;
 import com.chrisaraneo.mwl.model.SongAlbum;
+import com.chrisaraneo.mwl.model.extended.AlbumWithSongs;
 import com.chrisaraneo.mwl.repository.AlbumRepository;
 import com.chrisaraneo.mwl.repository.SongAlbumRepository;
 import com.chrisaraneo.mwl.repository.SongRepository;
@@ -34,7 +37,7 @@ public class SongAlbumController {
     
 	@PostMapping("/albums/{albumID}/{songID}/{track}")
 	@Secured("ROLE_ADMIN")
-	public SongAlbum addSongToAlbum(
+	public Album addSongToAlbum(
 	  		@PathVariable(value = "albumID") Integer albumID,
 	  		@PathVariable(value = "songID") Integer songID,
 	  		@PathVariable(value = "track") Integer track) {
@@ -47,12 +50,16 @@ public class SongAlbumController {
 	  	
 	  	SongAlbumKey id = new SongAlbumKey(track, album);
 	  	SongAlbum sa = songAlbumRepository.save(new SongAlbum(id, song));
-	  	return sa;
+	  	
+	  	albumRepository.flush();
+	  	
+    	Set<SongAlbum> songs = songAlbumRepository.findAllSongsInAlbum(albumID);
+	  	return new AlbumWithSongs(album, songs);
 	}
 	
 	@DeleteMapping("/albums/{albumID}/{songID}/{track}")
 	@Secured("ROLE_ADMIN")
-	public ResponseEntity<?> removeSongFromAlbum(
+	public Album removeSongFromAlbum(
 	  		@PathVariable(value = "albumID") Integer albumID,
 	  		@PathVariable(value = "songID") Integer songID,
 	  		@PathVariable(value = "track") Integer track) {
@@ -66,7 +73,10 @@ public class SongAlbumController {
 	  	SongAlbumKey id = new SongAlbumKey(track, album);
 	  	songAlbumRepository.deleteById(id);
 	  	
-	  	return ResponseEntity.ok().build();
+	  	albumRepository.flush();
+	  	
+	  	Set<SongAlbum> songs = songAlbumRepository.findAllSongsInAlbum(albumID);
+	  	return new AlbumWithSongs(album, songs);
 	}
 	
 }

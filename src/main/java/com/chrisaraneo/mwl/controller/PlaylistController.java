@@ -52,8 +52,6 @@ public class PlaylistController {
     @Autowired
     SongPlaylistRepository songPlaylistRepository;
     
-//    @Autowired
-//    PlaylistRecordRepository songsPlaylistRepository;
     
     @GetMapping("/playlists")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})

@@ -13,7 +13,7 @@ import com.chrisaraneo.mwl.model.SongAlbum;
 @Repository
 public interface SongAlbumRepository extends JpaRepository<SongAlbum, SongAlbumKey> {
 	@Query("SELECT s FROM SongAlbum s WHERE album_id = ?1")
-	Set<SongAlbum> findSongsInAlbum(Integer albumID);
+	Set<SongAlbum> findAllSongsInAlbum(Integer albumID);
 	
 	@Query("SELECT s FROM SongAlbum s WHERE song_id = ?1")
 	Set<SongAlbum> findAlbumsWithSong(Integer songID);

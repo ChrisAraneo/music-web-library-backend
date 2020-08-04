@@ -52,7 +52,6 @@ public class SongURL implements Serializable {
 		this.URL = URL;
 	}
 
-	@JsonIgnore
 	public Song getSong() {
 		return this.song;
 	}

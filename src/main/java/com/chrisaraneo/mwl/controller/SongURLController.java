@@ -1,12 +1,17 @@
 package com.chrisaraneo.mwl.controller;
 
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
+import com.chrisaraneo.mwl.model.Artist;
+import com.chrisaraneo.mwl.model.ArtistURL;
 import com.chrisaraneo.mwl.model.Song;
 import com.chrisaraneo.mwl.model.SongURL;
+import com.chrisaraneo.mwl.model.extended.ArtistWithURLs;
+import com.chrisaraneo.mwl.model.extended.SongWithURLs;
 import com.chrisaraneo.mwl.repository.SongRepository;
 import com.chrisaraneo.mwl.repository.SongURLRepository;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -37,38 +42,58 @@ public class SongURLController {
         		.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songURLID));
     }
     
+//    @PostMapping("/songurls")
+////    @Secured("ROLE_ADMIN")
+//    public Song createSongURL(@Valid @RequestBody SongURL url) throws ResourceNotFoundException {
+//    	
+//    	Integer songID = url.getSong().getSongID();
+//    	
+//    	Song song = songRepository.findById(songID)
+//        		.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
+//    	
+//    	url.setSong(song);
+//    	songURLRepository.flush();
+//    	
+//    	Set<SongURL> urls = songURLRepository.findAllBySong(song.getSongID());
+//    	return new SongWithURLs(song, urls);
+//    }
+    
     @PostMapping("/songurls")
     @Secured("ROLE_ADMIN")
-    public SongURL createSongURL(@Valid SongURL url, @RequestParam("song") Integer songID) throws ResourceNotFoundException {
-    	Song song = songRepository.findById(songID)
-    		.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songID));
-    	url.setSong(song);
-
-        return songURLRepository.save(url);
-    }
-
-    @PutMapping("/songurls/{id}")
-    @Secured("ROLE_ADMIN")
-    public SongURL updateSongURL(@PathVariable(value = "id") Integer songURLID,
-                                           @Valid @ModelAttribute SongURL modified) {
-
-        SongURL url = songURLRepository.findById(songURLID)
-        		.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songURLID));
-
-        url.setURL(modified.getURL());
-        url.setSong(modified.getSong());
-
-        return songURLRepository.save(url);
+    public Song createSongURL(@Valid @RequestBody SongURL url) throws ResourceNotFoundException {
+    	
+    	Song A = url.getSong();
+    	if(A != null) {
+    		Integer songID = A.getSongID();
+    		Song song = songRepository.findById(songID)
+    				.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songID));
+    		url.setSong(song);
+    		songURLRepository.save(url);
+    		Set<SongURL> urls = songURLRepository.findAllBySong(song.getSongID());
+        	
+            return new SongWithURLs(song, urls);
+    	} else {
+    		throw new ResourceNotFoundException("SongURL", "id", null);
+    	}
+    	
     }
 
     @DeleteMapping("/songurls/{id}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> deleteSongURL(@PathVariable(value = "id") Integer songURLID) {
+    public Song deleteSongURL(@PathVariable(value = "id") Integer songURLID) {
+    	
         SongURL url = songURLRepository.findById(songURLID)
                 .orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songURLID));
 
+        Integer songID = url.getSong().getSongID();
+        
         songURLRepository.delete(url);
+        songURLRepository.flush();
+        
+        Song song = songRepository.findById(songID)
+        		.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 
-        return ResponseEntity.ok().build();
+        Set<SongURL> urls = songURLRepository.findAllBySong(songID);
+    	return new SongWithURLs(song, urls);
     }
 }

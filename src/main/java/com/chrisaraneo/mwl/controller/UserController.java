@@ -11,6 +11,7 @@ import com.chrisaraneo.mwl.payload.SignUpRequest;
 import com.chrisaraneo.mwl.repository.RoleRepository;
 import com.chrisaraneo.mwl.repository.UserRepository;
 import com.chrisaraneo.mwl.security.JwtTokenProvider;
+import com.chrisaraneo.mwl.security.RequiresCaptcha;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,6 +79,7 @@ public class UserController {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@PostMapping("/signup")
+    @RequiresCaptcha
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),

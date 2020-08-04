@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.Song;
 import com.chrisaraneo.mwl.model.SongURL;
+import com.chrisaraneo.mwl.model.extended.EmptyJson;
 import com.chrisaraneo.mwl.model.extended.SongWithURLs;
 import com.chrisaraneo.mwl.repository.SongRepository;
 import com.chrisaraneo.mwl.repository.SongURLRepository;
@@ -35,11 +37,6 @@ public class SongController {
     @Autowired
     SongURLRepository songURLRepository;
 
-//    @GetMapping("/songs")
-//    @CrossOrigin(origins = "*")
-//    public List<Song> getSongs() {
-//        return songRepository.findAll();
-//    }
     
     @GetMapping("/songs")
     @CrossOrigin(origins = "*")
@@ -59,19 +56,19 @@ public class SongController {
 
     @PostMapping("/songs")
     @Secured("ROLE_ADMIN")
-    public @Valid Song createSong(@Valid Song song) {
+    public @Valid Song createSong(@Valid @RequestBody Song song) {
         return songRepository.save(song);
     }
 
     @PutMapping("/songs/{id}")
     @Secured("ROLE_ADMIN")
-    public Song updateSong(@PathVariable(value = "id") Integer songID,
-                                           @Valid @ModelAttribute Song modified) {
+    public Song updateSong(
+    		@PathVariable(value = "id") Integer songID,
+            @Valid @RequestBody Song modified) {
 
         Song song = songRepository.findById(songID)
         		.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 
-//        song.setAlbums(modified.getAlbums());
         song.setArtists(modified.getArtists());
         song.setBpm(modified.getBpm());
         song.setComment(modified.getComment());
@@ -80,24 +77,22 @@ public class SongController {
         song.setLength(modified.getLength());
         song.setMainKey(modified.getMainKey());
         song.setPublisher(modified.getPublisher());
-//        song.setSongsPlaylists(modified.getSongsPlaylists());
-//        song.setSongURLs(modified.getSongURLs());
         song.setTerms(modified.getTerms());
         song.setTitle(modified.getTitle());
         song.setWebsite(modified.getWebsite());
         song.setYear(modified.getYear());
         
-        return songRepository.save(song);
+        return songRepository.save(new Song(modified));
     }
 
     @DeleteMapping("/songs/{id}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> deleteSong(@PathVariable(value = "id") Integer songID) {
+    public Object deleteSong(@PathVariable(value = "id") Integer songID) {
         Song song = songRepository.findById(songID)
                 .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 
         songRepository.delete(song);
 
-        return ResponseEntity.ok().build();
+        return new EmptyJson();
     }
 }

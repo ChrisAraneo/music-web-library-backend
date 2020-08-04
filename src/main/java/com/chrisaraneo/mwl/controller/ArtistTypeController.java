@@ -2,6 +2,7 @@ package com.chrisaraneo.mwl.controller;
 
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.ArtistType;
+import com.chrisaraneo.mwl.model.extended.EmptyJson;
 import com.chrisaraneo.mwl.repository.ArtistTypeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,32 +34,32 @@ public class ArtistTypeController {
 
     @PostMapping("/artisttypes")
     @Secured("ROLE_ADMIN")
-    public ArtistType createArtistType(@Valid ArtistType artistType) {
+    public ArtistType createArtistType(@Valid @RequestBody ArtistType artistType) {
         return artistTypeRepository.save(artistType);
     }
 
     @PutMapping("/artisttypes/{id}")
     @Secured("ROLE_ADMIN")
-    public ArtistType updateArtistType(@PathVariable(value = "id") Integer artistTypeID,
-                                           @Valid ArtistType modified) {
+    public ArtistType updateArtistType(
+    		@PathVariable(value = "id") Integer artistTypeID,
+            @Valid @RequestBody ArtistType modified) {
 
         ArtistType artistType = artistTypeRepository.findById(artistTypeID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistType", "id", artistTypeID));
 
         artistType.setName(modified.getName());
 
-        ArtistType updatedArtistType = artistTypeRepository.save(artistType);
-        return updatedArtistType;
+        return artistTypeRepository.save(artistType);
     }
 
     @DeleteMapping("/artisttypes/{id}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> deleteArtistType(@PathVariable(value = "id") Integer artistTypeID) {
+    public Object deleteArtistType(@PathVariable(value = "id") Integer artistTypeID) {
         ArtistType artistType = artistTypeRepository.findById(artistTypeID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistType", "id", artistTypeID));
 
         artistTypeRepository.delete(artistType);
 
-        return ResponseEntity.ok().build();
+        return new EmptyJson();
     }
 }

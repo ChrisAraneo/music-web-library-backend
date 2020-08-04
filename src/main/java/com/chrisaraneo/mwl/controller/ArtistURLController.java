@@ -3,10 +3,15 @@ package com.chrisaraneo.mwl.controller;
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.Artist;
 import com.chrisaraneo.mwl.model.ArtistURL;
+import com.chrisaraneo.mwl.model.extended.ArtistDetailed;
+import com.chrisaraneo.mwl.model.extended.ArtistWithURLs;
+import com.chrisaraneo.mwl.model.extended.EmptyJson;
+import com.chrisaraneo.mwl.repository.AlbumRepository;
 import com.chrisaraneo.mwl.repository.ArtistRepository;
 import com.chrisaraneo.mwl.repository.ArtistURLRepository;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -25,6 +30,9 @@ public class ArtistURLController {
     
     @Autowired
     ArtistRepository artistRepository;
+    
+    @Autowired
+    AlbumRepository albumRepository;
 
     @GetMapping("/artisturls")
     public List<ArtistURL> getArtistURLs() {
@@ -38,39 +46,43 @@ public class ArtistURLController {
     }
     
     @PostMapping("/artisturls")
-    @Secured("ROLE_ADMIN")
-    public ArtistURL createArtistURL(@Valid ArtistURL url) throws ResourceNotFoundException {
-    	Integer artistID = url.getArtist().getArtistID();
+//    @Secured("ROLE_ADMIN")
+    public Artist createArtistURL(@Valid @RequestBody ArtistURL url) throws ResourceNotFoundException {
     	
-    	Artist artist = artistRepository.findById(artistID)
-    		.orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistID));
-    	url.setArtist(artist);
+    	Artist A = url.getArtist();
+    	if(A != null) {
+    		Integer artistID = A.getArtistID();
+    		Artist artist = artistRepository.findById(artistID)
+    				.orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistID));
+    		url.setArtist(artist);
+    		
+    		artistURLRepository.save(url);
+    		
+    		Set<ArtistURL> urls = artistURLRepository.findAllByArtist(artistID);
+            return new ArtistWithURLs(artist, urls);
+    	} else {
+    		throw new ResourceNotFoundException("ArtistURL", "id", null);
+    	}
     	
-        return artistURLRepository.save(url);
-    }
-
-    @PutMapping("/artisturls/{id}")
-    @Secured("ROLE_ADMIN")
-    public ArtistURL updateArtistURL(@PathVariable(value = "id") Integer artistURLID,
-                                           @Valid @ModelAttribute ArtistURL modified) {
-
-        ArtistURL url = artistURLRepository.findById(artistURLID)
-        		.orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistURLID));
-
-        url.setURL(modified.getURL());
-        url.setArtist(modified.getArtist());
-
-        return artistURLRepository.save(url);
     }
 
     @DeleteMapping("/artisturls/{id}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> deleteArtistURL(@PathVariable(value = "id") Integer artistURLID) {
+    public Artist deleteArtistURL(@PathVariable(value = "id") Integer artistURLID) {
         ArtistURL url = artistURLRepository.findById(artistURLID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistURLID));
 
+        Integer artistID = url.getArtist().getArtistID();
+        
         artistURLRepository.delete(url);
+        artistURLRepository.flush();
+        artistRepository.flush();
+        
+        Artist artist = artistRepository.findById(artistID)
+        		.orElseThrow(() -> new ResourceNotFoundException("ArtistURL", "id", artistID));
+        
+        Set<ArtistURL> urls = artistURLRepository.findAllByArtist(artistID);
 
-        return ResponseEntity.ok().build();
+        return new ArtistWithURLs(artist, urls);
     }
 }

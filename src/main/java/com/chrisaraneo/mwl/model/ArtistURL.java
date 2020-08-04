@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.chrisaraneo.mwl.model.extended.ArtistUndetailed;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -52,9 +53,8 @@ public class ArtistURL implements Serializable {
 		this.URL = URL;
 	}
 
-	@JsonIgnore
 	public Artist getArtist() {
-		return this.artist;
+		return new ArtistUndetailed(this.artist);
 	}
 
 	public void setArtist(Artist artist) {

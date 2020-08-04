@@ -2,6 +2,7 @@ package com.chrisaraneo.mwl.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import com.chrisaraneo.mwl.model.extended.ArtistUndetailed;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,6 +46,7 @@ public class Song implements Serializable {
 	private String terms;
 
 	@Column(nullable=false, length=255)
+	@NotBlank
 	private String title;
 
 	@Column(length=255)
