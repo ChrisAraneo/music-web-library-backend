@@ -1,7 +1,6 @@
 package com.chrisaraneo.mwl.repository;
 
 import com.chrisaraneo.mwl.model.ArtistURL;
-import com.chrisaraneo.mwl.model.SongAlbum;
 
 import java.util.Set;
 

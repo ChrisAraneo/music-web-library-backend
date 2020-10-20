@@ -1,58 +1,19 @@
 # Music Web Library Backend
 
-Wykonawcy
+I. URUCHAMIANIE ŚRODOWISKA DEVELOPERSKIEGO I TESTOWEGO
+W celu instalacji i przygotowania aplikacji internetowej do rozwoju i testowania proszę wykonać po kolei I.I, I.II, I.II
 
-GET /api/artists
-GET /api/artists/{ID}
-POST /api/artists?type={typeID}
-PUT /api/artists/{ID}
-DELETE /api/artists/{ID}
+I.I BAZA DANYCH
+1) Utworzyć nową bazę danych MySQL
+2) Zainicjalizować bazę danych danymi początkowymi używając skryptu SQL music-web-library-backend/sql/dump-music-db-init.sql
 
-Rodzaje działaności muzycznej
+I.II SERWER
+1) Utworzyć i odpowiednio skonfigurować application.properties (music-web-library-backend/src/main/resources/) wzorując się na ustawieniach application.properties.example
+2) Skonfigurować w zależności od potrzeb ustawienia w pakiecie com.chrisaraneo.mwl.config
+3) Pobrać wszystkie potrzebne zależności i przygotować projekt maven (music-web-library-backend)
+4) Uruchomić MusicWebLibraryApplication
 
-GET /api/artisttypes
-GET /api/artisttypes/{ID}
-POST /api/artisttypes
-PUT /api/artisttypes/{ID}
-DELETE /api/artisttypes/{ID}
-
-URL wykonawców
-
-GET /api/artistulrs
-GET /api/artistulrs/{ID}
-POST /api/artisturls?artist={ArtistID}
-PUT /api/artisturls/{ID}
-DELETE /api/artisturls/{ID}
-
-Piosenki
-
-GET /api/songs
-GET /api/songs/{ID}
-POST /api/songs
-PUT /api/songs/{ID}
-DELETE /api/songs/{ID}
-
-URL piosenek
-
-GET /api/songurls
-GET /api/songurls/{ID}
-POST /api/songurls?song={songID}
-PUT /api/songurls/{ID}
-DELETE /api/songurld/{ID}
-
-Użytkownicy (TODO)
-
-GET /api/users
-GET /api/users/{ID}
-POST /api/users
-PUT /api/users/{ID}
-DELETE /api/users/{ID}
-
-Recenzja albumu
-
-GET /api/review
-GET /api/review/{ID}
-POST /api/review?album={albumID}&user={userID}
-PUT /api/review/{ID}
-DELETE /api/review/{ID}
-
+I.III INTERNETOWY INTERFEJS
+1) Utworzyć i odpowiednio skonfigurować config.ts (music-web-library-frontend/src/) wzorując się na ustawieniach config.example.ts
+2) Pobrać wszystkie potrzebne zależności i przygotować projekt yarn (music-web-library-frontend)
+3) Po instalacji zależności uruchomić projekt yarn (yarn start)
