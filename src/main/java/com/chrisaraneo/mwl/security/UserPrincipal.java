@@ -1,6 +1,5 @@
 package com.chrisaraneo.mwl.security;
 
-import com.chrisaraneo.mwl.model.RoleName;
 import com.chrisaraneo.mwl.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

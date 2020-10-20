@@ -19,6 +19,7 @@ import com.chrisaraneo.mwl.repository.SongRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -88,8 +89,8 @@ public class ArtistController {
     @PostMapping("/artists/{artistID}/{songID}")
     @Secured("ROLE_ADMIN")
     public Artist addSongToArtist(
-    		@RequestParam("artistID") Integer artistID,
-    		@RequestParam("songID") Integer songID) {
+    		@PathVariable(value = "artistID") Integer artistID,
+    		@PathVariable(value = "songID") Integer songID) {
     	
     	Artist artist = artistRepository.findById(artistID)
     			.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistID));
@@ -130,20 +131,20 @@ public class ArtistController {
 
     @DeleteMapping("/artists/{id}")
     @Secured("ROLE_ADMIN")
-    public Object deleteArtist(@PathVariable(value = "id") Integer artistID) {
+    public ResponseEntity<EmptyJson> deleteArtist(@PathVariable(value = "id") Integer artistID) {
         Artist artist = artistRepository.findById(artistID)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistID));
 
         artistRepository.delete(artist);
 
-        return new EmptyJson();
+        return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     }
     
     @DeleteMapping("/artists/{artistID}/{songID}")
     @Secured("ROLE_ADMIN")
-    public Object deleteSongFromArtist(
-    		@RequestParam("artistID") Integer artistID,
-    		@RequestParam("songID") Integer songID) {
+    public ResponseEntity<EmptyJson> deleteSongFromArtist(
+    		@PathVariable(value = "artistID") Integer artistID,
+    		@PathVariable(value = "songID") Integer songID) {
     	
     	Artist artist = artistRepository.findById(artistID)
     			.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistID));
@@ -152,17 +153,27 @@ public class ArtistController {
     			.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
     	
     	Set<Artist> artists = song.getArtists();
-    	artists.remove(artist);
+    	for(Artist a : artists) {
+    		if(a.getArtistID() == artistID) {
+    			artists.remove(a);
+    			break;
+    		}
+    	}
     	song.setArtists(artists);
     	
     	Set<Song> songs = artist.getSongs();
-    	songs.remove(song);
+    	for(Song s : songs) {
+    		if(s.getSongID() == songID) {
+    			songs.remove(song);
+    			break;
+    		}
+    	}
     	artist.setSongs(songs);
 
     	songRepository.save(song);
     	artistRepository.save(artist);
     	
-    	return new EmptyJson();
+    	return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     }
     
 }

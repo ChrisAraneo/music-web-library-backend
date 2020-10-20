@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArtistURLRepository extends JpaRepository<ArtistURL, Integer> {
+	
 	@Query("SELECT s FROM ArtistURL s WHERE artist_id = ?1")
 	Set<ArtistURL> findAllByArtist(Integer artistID);
+	
 }

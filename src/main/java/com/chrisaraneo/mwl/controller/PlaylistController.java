@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chrisaraneo.mwl.exception.BadRequestException;
+import com.chrisaraneo.mwl.exception.ForbiddenException;
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.keys.SongPlaylistKey;
 import com.chrisaraneo.mwl.model.Playlist;
@@ -83,7 +85,7 @@ public class PlaylistController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
     public Playlist createPlaylist(
-    		@Valid Playlist playlist,
+    		@Valid @RequestBody Playlist playlist,
     		@CurrentUser UserPrincipal currentUser) {
     	
     	String title = playlist.getTitle();
@@ -92,10 +94,12 @@ public class PlaylistController {
 	    	if(user.isPresent()) {
 	    		playlist.setUser(user.get());
 	    		return playlistRepository.save(playlist);
+	    	} else {
+	    		throw new ResourceNotFoundException("User", "id", currentUser.getID());
 	    	}
+    	} else {
+    		throw new BadRequestException("Invalid playlist title");
     	}
-    	
-        return null;
     }
     
     @PutMapping("/playlists/{id}")
@@ -104,7 +108,7 @@ public class PlaylistController {
     public Playlist updatePlaylist(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer playlistID,
-            @Valid Playlist modified) {
+            @Valid @RequestBody Playlist modified) {
 
         Playlist playlist = playlistRepository.findById(playlistID)
                 .orElseThrow(() -> new ResourceNotFoundException("Playlist", "id", playlistID));
@@ -116,12 +120,14 @@ public class PlaylistController {
     	if(user.isPresent()) {
     		if(playlist.getUser().getID() == user.get().getID()) {
     			playlist.setUser(user.get());
-    		playlist.setTitle(modified.getTitle());
-    		return playlistRepository.save(playlist);
+    		    playlist.setTitle(modified.getTitle());
+    		    return playlistRepository.save(playlist);
+    		} else {
+    			throw new ForbiddenException("This user is not an owner of this review");
     		}
+    	} else {
+    		throw new BadRequestException("User information is not provided in request");
     	}
-    	
-    	return null;
     }
     
     private void removeAllSongsFromPlaylist(Playlist playlist) {
@@ -140,7 +146,7 @@ public class PlaylistController {
     @DeleteMapping("/playlists/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity deletePlaylist(
+    public ResponseEntity<EmptyJson> deletePlaylist(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer playlistID) {
     	
@@ -151,7 +157,7 @@ public class PlaylistController {
     		removeAllSongsFromPlaylist(playlist);
     		playlistRepository.delete(playlist);
     		playlistRepository.flush();
-    		return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
+    		return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     	} else {
     		String email = currentUser.getEmail();
     		String username = currentUser.getUsername();
@@ -165,69 +171,16 @@ public class PlaylistController {
     						removeAllSongsFromPlaylist(playlist);
     						playlistRepository.delete(playlist);
     						playlistRepository.flush();
-    						return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
+    						return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     					} else {
-    						System.out.println("NOT EQUALS");
+    						return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.FORBIDDEN);
     					}
     				}
     			}
     		}
     	}
     	
-    	// TODO
     	throw new ResourceNotFoundException("Playlist", "id", playlistID);
-//    	return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
     }
-    
-//    @PostMapping("/playlists/{playlistID}/{songID}")
-//    @Secured("ROLE_ADMIN")
-//    public Playlist addSongToPlaylist(
-//    		@PathVariable(value = "playlistID") Integer playlistID,
-//    		@PathVariable(value = "songID") Integer songID) {
-//    	
-//    	Playlist playlist = playlistRepository.findById(playlistID)
-//                .orElseThrow(() -> new ResourceNotFoundException("Playlist", "id", playlistID));
-//    	
-//    	Song song = songRepository.findById(songID)
-//                .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
-//    	
-//    	PlaylistRecord record = new PlaylistRecord();
-//    	record.setPlaylist(playlist);
-//    	record.setSong(song);
-//    	record.setOrder(new Integer(0));
-//    	
-//    	Set<PlaylistRecord> set = playlist.getPlaylistRecords();
-//    	set.add(record);
-//    	playlist.setPlaylistRecords(set);
-//    	
-//    	songsPlaylistRepository.save(record);
-//        return playlistRepository.save(playlist);
-//    }
-
-//    @PutMapping("/songsplaylist/{id}")
-//    @Secured("ROLE_ADMIN")
-//    public PlaylistRecord updateSongPlaylist(
-//    		@PathVariable(value = "id") Integer songsPlaylistID,
-//    		@RequestParam(name = "order") Integer order) {
-//        
-//        PlaylistRecord item = songsPlaylistRepository.findById(songsPlaylistID)
-//                .orElseThrow(() -> new ResourceNotFoundException("PlaylistRecord", "id", songsPlaylistID));
-//
-//        item.setOrder(order);
-//        
-//        return songsPlaylistRepository.save(item);
-//    }
-
-//    
-//    @DeleteMapping("/songsplaylist/{id}")
-//    @Secured("ROLE_ADMIN")
-//    public ResponseEntity<?> deleteSongInPlaylist(@PathVariable(value = "id") Integer ID) {
-//        PlaylistRecord item = songsPlaylistRepository.findById(ID)
-//                .orElseThrow(() -> new ResourceNotFoundException("SongPlaylist", "id", ID));
-//
-//        songsPlaylistRepository.delete(item);
-//
-//        return ResponseEntity.ok().build();
-//    }
     
 }

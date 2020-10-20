@@ -17,5 +17,7 @@ interface SongList {
 
 @Repository
 public interface SongRepository extends JpaRepository<Song, Integer> {
-	List<SongList> findAllBy(); 
+	
+	List<SongList> findAllBy();
+	
 }

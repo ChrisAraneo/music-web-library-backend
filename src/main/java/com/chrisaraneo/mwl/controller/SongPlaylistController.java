@@ -91,7 +91,8 @@ public class SongPlaylistController {
     }
     
 	@PostMapping("/playlists/{playlistID}/{songID}")
-	@Secured("ROLE_ADMIN")
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@PreAuthorize("hasRole('USER')")
 	public SongPlaylist addSongToPlaylist(
 	  		@PathVariable(value = "playlistID") Integer playlistID,
 	  		@PathVariable(value = "songID") Integer songID) {

@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import com.chrisaraneo.mwl.model.extended.UserUndetailed;
 
 
-
 @Entity
 @Table(name="playlists")
 @NamedQuery(name="Playlist.findAll", query="SELECT p FROM Playlist p")
@@ -25,13 +24,8 @@ public class Playlist implements Serializable {
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", nullable=false)
-//	@NotNull
 	private User user;
 	
-//	@OneToMany(mappedBy="id")
-//	private Set<SongPlaylist> songsInPlaylist;
-	
-
 	public Playlist() { }
 	
 	public Playlist(Playlist playlist) {
@@ -64,13 +58,5 @@ public class Playlist implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-//	public Set<SongPlaylist> getSongs() {
-//		return this.songsInPlaylist;
-//	}
-//
-//	public void setSongs(Set<SongPlaylist> songs) {
-//		this.songsInPlaylist = songs;
-//	}
 
 }

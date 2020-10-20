@@ -1,6 +1,5 @@
 package com.chrisaraneo.mwl.security;
 
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.lang.annotation.*;

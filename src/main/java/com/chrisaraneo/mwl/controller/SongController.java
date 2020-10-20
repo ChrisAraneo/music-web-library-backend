@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -87,12 +88,12 @@ public class SongController {
 
     @DeleteMapping("/songs/{id}")
     @Secured("ROLE_ADMIN")
-    public Object deleteSong(@PathVariable(value = "id") Integer songID) {
+    public ResponseEntity<EmptyJson> deleteSong(@PathVariable(value = "id") Integer songID) {
         Song song = songRepository.findById(songID)
                 .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 
         songRepository.delete(song);
 
-        return new EmptyJson();
+        return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     }
 }

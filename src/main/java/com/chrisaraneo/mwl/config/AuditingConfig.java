@@ -14,7 +14,6 @@ import java.util.Optional;
 @Configuration
 @EnableJpaAuditing
 public class AuditingConfig {
-
     @Bean
     public AuditorAware<Long> auditorProvider() {
         return new SpringSecurityAuditAwareImpl();
@@ -22,7 +21,6 @@ public class AuditingConfig {
 }
 
 class SpringSecurityAuditAwareImpl implements AuditorAware<Long> {
-
     @Override
     public Optional<Long> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -1,5 +1,7 @@
 package com.chrisaraneo.mwl.controller;
 
+import com.chrisaraneo.mwl.exception.BadRequestException;
+import com.chrisaraneo.mwl.exception.ForbiddenException;
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.Album;
 import com.chrisaraneo.mwl.model.Review;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,7 +59,7 @@ public class ReviewController {
     @PreAuthorize("hasRole('USER')")
     @RequiresCaptcha
     public Review createReview(
-    		@Valid Review review,
+    		@Valid @RequestBody Review review,
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer albumID) throws ResourceNotFoundException {
     	
@@ -81,8 +84,8 @@ public class ReviewController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
     @RequiresCaptcha
-    public Object updateReview(
-    		@Valid @ModelAttribute Review modified,
+    public Review updateReview(
+    		@Valid @RequestBody Review modified,
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer reviewID) {
 
@@ -104,16 +107,18 @@ public class ReviewController {
 	    		review.setContent(modified.getContent());
 	    		review.setTitle(modified.getTitle());
 	    		return reviewRepository.save(review);
+    		} else {
+    			throw new ForbiddenException("This user is not the author of this review");
     		}
+    	} else {
+    		throw new BadRequestException("User info not provided in request");
     	}
-    	
-    	return new EmptyJson();
     }
     
     @DeleteMapping("/reviews/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('USER')")
-    public Object deleteReview(
+    public ResponseEntity<EmptyJson> deleteReview(
     		@CurrentUser UserPrincipal currentUser,
     		@PathVariable(value = "id") Integer reviewID) {
     	
@@ -128,7 +133,7 @@ public class ReviewController {
     		album.removeReview(review);
     		review.removeAlbum(album);
     		reviewRepository.deleteById(reviewID);
-    		return ResponseEntity.ok().build();
+    		return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     	} else {
     		String email = currentUser.getEmail();
     		String username = currentUser.getUsername();
@@ -142,14 +147,19 @@ public class ReviewController {
     						album.removeReview(review);
     			    		review.removeAlbum(album);
     			    		reviewRepository.deleteById(reviewID);
-    			    		return new EmptyJson();
+    			    		return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
+    					} else {
+    						throw new ForbiddenException("This user is not an owner of this review");
     					}
+    				} else {
+    					throw new ForbiddenException("This review is corrupted and doesn't contain information about author.");
     				}
     			}
+    		} else {
+    			throw new BadRequestException("User information is not provided in request");
     		}
     	}
     	
-    	// TODO
-    	return ResponseEntity.badRequest().build();
+    	return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

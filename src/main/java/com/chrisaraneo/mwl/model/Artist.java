@@ -117,28 +117,6 @@ public class Artist implements Serializable {
 		this.artistType = artistType;
 	}
 
-//	public Set<ArtistURL> getArtistURLs() {
-//		return this.artistURLs;
-//	}
-//
-//	public void setArtistURLs(Set<ArtistURL> artistURLs) {
-//		this.artistURLs = artistURLs;
-//	}
-
-//	public ArtistURL addArtistURL(ArtistURL artistURL) {
-//		getArtistURLs().add(artistURL);
-//		artistURL.setArtist(this);
-//
-//		return artistURL;
-//	}
-//
-//	public ArtistURL removeArtistURL(ArtistURL artistURL) {
-//		getArtistURLs().remove(artistURL);
-//		artistURL.setArtist(null);
-//
-//		return artistURL;
-//	}
-
 	@JsonIgnore
 	public Set<Song> getSongs() {
 		return this.songs;

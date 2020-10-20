@@ -63,7 +63,7 @@ public class AlbumController {
     @Autowired
     SongAlbumRepository songAlbumRepository;
 
-
+    
     @GetMapping("/albums")
     public List<AlbumWithArtists> getAllAlbums() {
     	List<Album> As = albumRepository.findAll();
@@ -107,25 +107,6 @@ public class AlbumController {
         return albumRepository.save(album);
     }
     
-//    @PostMapping("/albums/{albumID}/{songID}")
-//    @Secured("ROLE_ADMIN")
-//    public Album addSongToAlbum(
-//    		@PathVariable(value = "albumID") Integer albumID,
-//    		@PathVariable(value = "songID") Integer songID) {
-//    	
-//    	Album album = albumRepository.findById(albumID)
-//                .orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
-//    	
-//    	Song song = songRepository.findById(songID)
-//                .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
-//    	
-//    	album.getSongs().add(song);
-//    	song.getAlbums().add(album);
-//    	
-//    	songRepository.save(song);
-//        return albumRepository.save(album);
-//    }
-
     @PutMapping("/albums/{id}")
     @Secured("ROLE_ADMIN")
     public Album updateAlbum(@PathVariable(value = "id") Integer albumID,
@@ -156,7 +137,7 @@ public class AlbumController {
     @DeleteMapping("/albums/{id}")
     @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteAlbum(@PathVariable(value = "id") Integer albumID) {
+    public ResponseEntity<EmptyJson> deleteAlbum(@PathVariable(value = "id") Integer albumID) {
     	
     	Album album = albumRepository.findById(albumID)
                 .orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
@@ -164,7 +145,7 @@ public class AlbumController {
     	removeAllSongsFromAlbum(album);
     	albumRepository.delete(album);
     	albumRepository.flush();
-    	return new ResponseEntity(new EmptyJson(), HttpStatus.OK);
+    	return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     }
     
 }

@@ -14,5 +14,7 @@ interface ArtistList {
 
 @Repository
 public interface ArtistRepository extends JpaRepository<Artist, Integer> {
+	
 	List<ArtistList> findAllBy(); 
+	
 }

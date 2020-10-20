@@ -42,22 +42,6 @@ public class SongURLController {
         		.orElseThrow(() -> new ResourceNotFoundException("SongURL", "id", songURLID));
     }
     
-//    @PostMapping("/songurls")
-////    @Secured("ROLE_ADMIN")
-//    public Song createSongURL(@Valid @RequestBody SongURL url) throws ResourceNotFoundException {
-//    	
-//    	Integer songID = url.getSong().getSongID();
-//    	
-//    	Song song = songRepository.findById(songID)
-//        		.orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
-//    	
-//    	url.setSong(song);
-//    	songURLRepository.flush();
-//    	
-//    	Set<SongURL> urls = songURLRepository.findAllBySong(song.getSongID());
-//    	return new SongWithURLs(song, urls);
-//    }
-    
     @PostMapping("/songurls")
     @Secured("ROLE_ADMIN")
     public Song createSongURL(@Valid @RequestBody SongURL url) throws ResourceNotFoundException {

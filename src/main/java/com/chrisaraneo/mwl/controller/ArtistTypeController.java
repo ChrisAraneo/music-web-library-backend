@@ -6,6 +6,7 @@ import com.chrisaraneo.mwl.model.extended.EmptyJson;
 import com.chrisaraneo.mwl.repository.ArtistTypeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +55,12 @@ public class ArtistTypeController {
 
     @DeleteMapping("/artisttypes/{id}")
     @Secured("ROLE_ADMIN")
-    public Object deleteArtistType(@PathVariable(value = "id") Integer artistTypeID) {
+    public ResponseEntity<EmptyJson> deleteArtistType(@PathVariable(value = "id") Integer artistTypeID) {
         ArtistType artistType = artistTypeRepository.findById(artistTypeID)
                 .orElseThrow(() -> new ResourceNotFoundException("ArtistType", "id", artistTypeID));
 
         artistTypeRepository.delete(artistType);
 
-        return new EmptyJson();
+        return new ResponseEntity<EmptyJson>(new EmptyJson(), HttpStatus.OK);
     }
 }

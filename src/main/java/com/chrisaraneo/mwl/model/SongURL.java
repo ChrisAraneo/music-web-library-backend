@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
-
 @Entity@Table(name="songurls")
 @NamedQuery(name="SongURL.findAll", query="SELECT s FROM SongURL s")
 public class SongURL implements Serializable {

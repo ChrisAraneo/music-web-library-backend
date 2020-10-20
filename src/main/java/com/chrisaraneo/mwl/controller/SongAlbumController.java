@@ -67,7 +67,7 @@ public class SongAlbumController {
 	  	Album album = albumRepository.findById(albumID)
 	              .orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumID));
 	  	
-	  	Song song = songRepository.findById(songID)
+	  	songRepository.findById(songID)
 	              .orElseThrow(() -> new ResourceNotFoundException("Song", "id", songID));
 	  	
 	  	SongAlbumKey id = new SongAlbumKey(track, album);

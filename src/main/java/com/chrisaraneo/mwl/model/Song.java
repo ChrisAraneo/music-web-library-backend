@@ -53,10 +53,6 @@ public class Song implements Serializable {
 	private String website;
 
 	private Integer year;
-	
-//	@JsonProperty(access = Access.WRITE_ONLY)
-//	@ManyToMany(mappedBy = "songs")
-//    private Set<SongAlbum> albums;
 
 	@ManyToMany
 	@JoinTable(
@@ -64,17 +60,6 @@ public class Song implements Serializable {
 		joinColumns = @JoinColumn(name = "song_id"),
 		inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<Artist> artists = new HashSet<Artist>();
-	
-//	@JsonProperty(access = Access.WRITE_ONLY)
-//	@ManyToMany(mappedBy = "songs")
-//    private Set<SongAlbum> albums;
-
-	
-//	@OneToMany(mappedBy="song")
-//	private Set<SongAlbum> albums;
-
-//	@OneToMany(mappedBy="song")
-//	private Set<SongURL> songURLs;
 
 	public Song() { }
 	
@@ -190,14 +175,6 @@ public class Song implements Serializable {
 		this.year = year;
 	}
 
-//	public Set<SongAlbum> getAlbums() {
-//		return this.albums;
-//	}
-//
-//	public void setAlbums(Set<SongAlbum> albums) {
-//		this.albums = albums;
-//	}
-
 	public Set<Artist> getArtists() {
 		Set<Artist> aus = new HashSet<Artist>();
 		for(Artist artist : artists) {
@@ -209,49 +186,5 @@ public class Song implements Serializable {
 	public void setArtists(Set<Artist> artists) {
 		this.artists = artists;
 	}
-
-//	public Set<SongsPlaylist> getSongsPlaylists() {
-//		return this.songsPlaylists;
-//	}
-//
-//	public void setSongsPlaylists(Set<SongsPlaylist> songsPlaylists) {
-//		this.songsPlaylists = songsPlaylists;
-//	}
-
-//	public SongsPlaylist addSongsPlaylist(SongsPlaylist songsPlaylist) {
-//		getSongsPlaylists().add(songsPlaylist);
-//		songsPlaylist.setSong(this);
-//
-//		return songsPlaylist;
-//	}
-//
-//	public SongsPlaylist removeSongsPlaylist(SongsPlaylist songsPlaylist) {
-//		getSongsPlaylists().remove(songsPlaylist);
-//		songsPlaylist.setSong(null);
-//
-//		return songsPlaylist;
-//	}
-
-//	public Set<SongURL> getSongURLs() {
-//		return this.songURLs;
-//	}
-//
-//	public void setSongURLs(Set<SongURL> songURLs) {
-//		this.songURLs = songURLs;
-//	}
-
-//	public SongURL addSongURL(SongURL songURL) {
-//		getSongURLs().add(songURL);
-//		songURL.setSong(this);
-//
-//		return songURL;
-//	}
-//
-//	public SongURL removeSongURL(SongURL songURL) {
-//		getSongURLs().remove(songURL);
-//		songURL.setSong(null);
-//
-//		return songURL;
-//	}
 
 }

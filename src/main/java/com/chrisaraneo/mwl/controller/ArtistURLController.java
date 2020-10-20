@@ -46,7 +46,7 @@ public class ArtistURLController {
     }
     
     @PostMapping("/artisturls")
-//    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public Artist createArtistURL(@Valid @RequestBody ArtistURL url) throws ResourceNotFoundException {
     	
     	Artist A = url.getArtist();

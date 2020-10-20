@@ -18,8 +18,6 @@ public class Cover implements Serializable {
 	@Lob
 	private String data;
 
-//	@OneToMany(mappedBy="cover")
-//	private Set<Album> albums;
 
 	public Cover() { }
 	
@@ -43,27 +41,5 @@ public class Cover implements Serializable {
 	public void setData(String data) {
 		this.data = data;
 	}
-
-//	public Set<Album> getAlbums() {
-//		return this.albums;
-//	}
-//
-//	public void setAlbums(Set<Album> albums) {
-//		this.albums = albums;
-//	}
-//
-//	public Album addAlbum(Album album) {
-//		getAlbums().add(album);
-//		album.setCover(this);
-//
-//		return album;
-//	}
-//
-//	public Album removeAlbum(Album album) {
-//		getAlbums().remove(album);
-//		album.setCover(null);
-//
-//		return album;
-//	}
 
 }

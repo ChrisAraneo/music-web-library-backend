@@ -1,6 +1,5 @@
 package com.chrisaraneo.mwl.security;
 
-
 import com.chrisaraneo.mwl.exception.ResourceNotFoundException;
 import com.chrisaraneo.mwl.model.User;
 import com.chrisaraneo.mwl.repository.UserRepository;
@@ -10,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String usernameOrEmail)
             throws UsernameNotFoundException {
-        // Let people login with either username or email
+
         User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)

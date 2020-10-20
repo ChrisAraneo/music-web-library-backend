@@ -19,42 +19,36 @@ public class ArtistUndetailed extends Artist {
 	@Override
 	@JsonIgnore
 	public Date getBirthDate() {
-		// TODO Auto-generated method stub
 		return super.getBirthDate();
 	}
 
 	@Override
 	@JsonIgnore
 	public String getCountry() {
-		// TODO Auto-generated method stub
 		return super.getCountry();
 	}
 
 	@Override
 	@JsonIgnore
 	public String getFirstName() {
-		// TODO Auto-generated method stub
 		return super.getFirstName();
 	}
 
 	@Override
 	@JsonIgnore
 	public String getLastName() {
-		// TODO Auto-generated method stub
 		return super.getLastName();
 	}
 
 	@Override
 	@JsonIgnore
 	public ArtistType getArtistType() {
-		// TODO Auto-generated method stub
 		return super.getArtistType();
 	}
 
 	@Override
 	@JsonIgnore
 	public Set<Song> getSongs() {
-		// TODO Auto-generated method stub
 		return super.getSongs();
 	}
 	
